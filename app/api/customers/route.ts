@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const admin = createAdminClient();
   const { data, error } = await admin
     .from('customers')
-    .insert({ ...body, created_by: session.userId })
+    .insert({ ...body, business_id: session.businessId, created_by: session.userId })
     .select()
     .single();
   if (error) return jsonError(error.message);

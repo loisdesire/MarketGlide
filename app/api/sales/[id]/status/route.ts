@@ -7,7 +7,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (!session) return jsonError('Unauthorized', 401);
   if (!['Administrator', 'Manager', 'Sales Staff'].includes(session.role)) return jsonError('Forbidden', 403);
 
-  const { id }                      = await params;
+  const { id }                       = await params;
   const { status: newStatus, force } = await request.json();
 
   const admin = createAdminClient();
@@ -16,6 +16,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     .from('sales')
     .select('id, status, stock_deducted, qty, product_id, invoice_number')
     .eq('id', id)
+    .eq('business_id', session.businessId)
     .single();
   if (saleErr || !sale) return jsonError('Sale not found.', 404);
   if (sale.status === newStatus) return jsonOk({ message: 'No change.' });
@@ -41,6 +42,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       reason:      `Sale ${sale.invoice_number} marked ${newStatus}`,
       source_type: 'sale',
       source_id:   id,
+      business_id: session.businessId,
       created_by:  session.userId,
     });
 
@@ -48,7 +50,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     // Moving FROM cancelled/refunded → re-deduct stock
     if ((product?.stock_qty ?? 0) < sale.qty && !force) {
       return Response.json({
-        error: `Only ${product?.stock_qty ?? 0} unit(s) in stock.`,
+        error:   `Only ${product?.stock_qty ?? 0} unit(s) in stock.`,
         confirm: `Only ${product?.stock_qty ?? 0} unit(s) of this product are currently in stock. Setting this sale back to "${newStatus}" will take stock negative. Continue anyway?`,
       }, { status: 409 });
     }
@@ -61,15 +63,16 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       reason:      `Sale ${sale.invoice_number} reactivated as ${newStatus}`,
       source_type: 'sale',
       source_id:   id,
+      business_id: session.businessId,
       created_by:  session.userId,
     });
   }
 
   await admin.from('sales').update({
-    status:        newStatus,
+    status:         newStatus,
     stock_deducted: !willRestock,
-    updated_by:    session.userId,
-  }).eq('id', id);
+    updated_by:     session.userId,
+  }).eq('id', id).eq('business_id', session.businessId);
 
   return jsonOk({ success: true, new_stock: newStockQty });
 }

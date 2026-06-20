@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Printer } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useApp } from '@/context/AppContext';
@@ -32,7 +32,7 @@ export default function InvoicesPage() {
       supabase.from('sales').select('*').order('date', { ascending: false }),
       supabase.from('customers').select('id,name,email,phone,address'),
       supabase.from('products').select('id,name,sku'),
-      supabase.from('business_settings').select('name,email,address').eq('id', 1).single(),
+      (supabase as any).from('businesses').select('name,email,address').single(),
     ]).then(([s, c, p, b]) => {
       setSales((s.data ?? []) as Sale[]);
       setCustomers((c.data ?? []) as Customer[]);

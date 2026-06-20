@@ -9,9 +9,9 @@ export async function POST(request: Request) {
   if (session.role !== 'Administrator') return jsonError('Forbidden — Administrators only.', 403);
 
   const { email, full_name, password, role } = await request.json();
-  if (!email)                       return jsonError('Email is required.');
-  if (!password || password.length < 6) return jsonError('Password must be at least 6 characters.');
-  if (!VALID_ROLES.includes(role))  return jsonError('Invalid role.');
+  if (!email)                            return jsonError('Email is required.');
+  if (!password || password.length < 6)  return jsonError('Password must be at least 6 characters.');
+  if (!VALID_ROLES.includes(role))       return jsonError('Invalid role.');
 
   const admin = createAdminClient();
 
@@ -23,9 +23,14 @@ export async function POST(request: Request) {
   });
   if (error) return jsonError(error.message);
 
-  // Upsert profile — ensures role is set even if trigger ran first with defaults
+  // Upsert profile with the same business_id as the inviting admin
   await admin.from('user_profiles').upsert(
-    { id: data.user.id, full_name: full_name ?? '', role },
+    {
+      id:          data.user.id,
+      full_name:   full_name ?? '',
+      role,
+      business_id: session.businessId,
+    },
     { onConflict: 'id' },
   );
 

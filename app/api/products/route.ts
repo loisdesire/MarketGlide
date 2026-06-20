@@ -6,7 +6,11 @@ export async function GET() {
   if (!session) return jsonError('Unauthorized', 401);
 
   const admin = createAdminClient();
-  const { data, error } = await admin.from('products').select('*').order('name');
+  const { data, error } = await admin
+    .from('products')
+    .select('*')
+    .eq('business_id', session.businessId)
+    .order('name');
   if (error) return jsonError(error.message);
   return jsonOk(data);
 }
@@ -22,7 +26,7 @@ export async function POST(request: Request) {
   const admin = createAdminClient();
   const { data, error } = await admin
     .from('products')
-    .insert({ ...body, created_by: session.userId })
+    .insert({ ...body, business_id: session.businessId, created_by: session.userId })
     .select()
     .single();
   if (error) return jsonError(error.message);

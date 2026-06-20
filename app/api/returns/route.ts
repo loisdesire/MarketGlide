@@ -11,11 +11,12 @@ export async function POST(request: Request) {
 
   const admin = createAdminClient();
 
-  // Fetch the linked sale to get the product
+  // Fetch the linked sale — scoped to this business
   const { data: sale } = await admin
     .from('sales')
     .select('id, product_id, invoice_number')
     .eq('id', body.sale_id)
+    .eq('business_id', session.businessId)
     .single();
   if (!sale) return jsonError('Sale not found.', 404);
 
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
       status:        body.status ?? 'Pending',
       restock:       body.restock ?? true,
       notes:         body.notes ?? '',
+      business_id:   session.businessId,
       created_by:    session.userId,
     })
     .select()
@@ -55,6 +57,7 @@ export async function POST(request: Request) {
         reason:      `Customer return for ${sale.invoice_number}`,
         source_type: 'return',
         source_id:   ret.id,
+        business_id: session.businessId,
         created_by:  session.userId,
       });
     }

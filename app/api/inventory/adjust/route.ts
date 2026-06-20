@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   if (!['Administrator', 'Manager', 'Warehouse Staff'].includes(session.role)) return jsonError('Forbidden', 403);
 
   const { product_id, qty_change, reason } = await request.json();
-  if (!product_id) return jsonError('product_id is required.');
+  if (!product_id)                   return jsonError('product_id is required.');
   if (typeof qty_change !== 'number') return jsonError('qty_change must be a number.');
 
   const admin = createAdminClient();
@@ -16,6 +16,7 @@ export async function POST(request: Request) {
     .from('products')
     .select('id, stock_qty')
     .eq('id', product_id)
+    .eq('business_id', session.businessId)
     .single();
   if (prodErr || !product) return jsonError('Product not found.', 404);
 
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
     qty_change,
     reason:      reason ?? 'Manual adjustment',
     source_type: 'manual',
+    business_id: session.businessId,
     created_by:  session.userId,
   });
 

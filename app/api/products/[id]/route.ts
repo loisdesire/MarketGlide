@@ -14,6 +14,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     .from('products')
     .update(body)
     .eq('id', id)
+    .eq('business_id', session.businessId)
     .select()
     .single();
   if (error) return jsonError(error.message);
@@ -27,7 +28,11 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
 
   const { id } = await params;
   const admin   = createAdminClient();
-  const { error } = await admin.from('products').delete().eq('id', id);
+  const { error } = await admin
+    .from('products')
+    .delete()
+    .eq('id', id)
+    .eq('business_id', session.businessId);
   if (error) return jsonError(error.message);
   return jsonOk({ success: true });
 }

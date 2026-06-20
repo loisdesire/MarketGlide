@@ -1,6 +1,20 @@
 import { getSessionUserWithRole, jsonOk, jsonError } from '@/lib/api-helpers';
 import { createAdminClient } from '@/lib/supabase/admin';
 
+export async function GET() {
+  const session = await getSessionUserWithRole();
+  if (!session) return jsonError('Unauthorized', 401);
+
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from('businesses')
+    .select('name, email, address')
+    .eq('id', session.businessId)
+    .single();
+  if (error) return jsonError(error.message);
+  return jsonOk(data);
+}
+
 export async function PATCH(request: Request) {
   const session = await getSessionUserWithRole();
   if (!session) return jsonError('Unauthorized', 401);
@@ -9,9 +23,9 @@ export async function PATCH(request: Request) {
   const body = await request.json();
   const admin = createAdminClient();
   const { data, error } = await admin
-    .from('business_settings')
-    .update({ ...body, updated_by: session.userId })
-    .eq('id', 1)
+    .from('businesses')
+    .update({ name: body.name, email: body.email, address: body.address })
+    .eq('id', session.businessId)
     .select()
     .single();
   if (error) return jsonError(error.message);

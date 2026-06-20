@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useApp } from '@/context/AppContext';
+// createClient used only for user list (RLS-scoped to same business via policies)
 import { useDialog } from '@/context/DialogContext';
 import Topbar from '@/components/layout/Topbar';
 import Modal from '@/components/ui/Modal';
@@ -20,16 +21,21 @@ export default function SettingsPage() {
   const { user } = useApp();
   const dialog   = useDialog();
 
-  const [biz, setBiz]         = useState<Business>({ name: '', email: '', address: '' });
-  const [users, setUsers]     = useState<UserProfile[]>([]);
-  const [saved, setSaved]     = useState(false);
-  const [saving, setSaving]   = useState(false);
+  const [biz, setBiz]           = useState<Business>({ name: '', email: '', address: '' });
+  const [users, setUsers]       = useState<UserProfile[]>([]);
+  const [saved, setSaved]       = useState(false);
+  const [saving, setSaving]     = useState(false);
   const [bizError, setBizError] = useState('');
 
   const [inviteModal, setInviteModal] = useState(false);
-  const [invite, setInvite]     = useState(BLANK_INVITE);
-  const [inviting, setInviting] = useState(false);
+  const [invite, setInvite]           = useState(BLANK_INVITE);
+  const [inviting, setInviting]       = useState(false);
   const [inviteError, setInviteError] = useState('');
+
+  async function loadBiz() {
+    const res = await fetch('/api/settings');
+    if (res.ok) setBiz(await res.json());
+  }
 
   async function loadUsers() {
     const supabase = createClient();
@@ -38,21 +44,16 @@ export default function SettingsPage() {
   }
 
   useEffect(() => {
-    const supabase = createClient();
-    Promise.all([
-      supabase.from('business_settings').select('name,email,address').eq('id', 1).single(),
-    ]).then(([b]) => {
-      if (b.data) setBiz(b.data as Business);
-    });
+    loadBiz();
     loadUsers();
   }, []);
 
   async function saveBiz() {
     setSaving(true); setBizError(''); setSaved(false);
     const res = await fetch('/api/settings', {
-      method: 'PATCH',
+      method:  'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(biz),
+      body:    JSON.stringify(biz),
     });
     if (!res.ok) { setBizError((await res.json()).error ?? 'Save failed.'); setSaving(false); return; }
     setSaving(false); setSaved(true);
@@ -62,9 +63,9 @@ export default function SettingsPage() {
   async function changeRole(userId: string, newRole: string) {
     if (!await dialog.confirm(`Change this user's role to "${newRole}"?`, { title: 'Change Role', confirmLabel: 'Change Role' })) return;
     const res = await fetch(`/api/users/${userId}/role`, {
-      method: 'PATCH',
+      method:  'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ role: newRole }),
+      body:    JSON.stringify({ role: newRole }),
     });
     if (!res.ok) { await dialog.alert((await res.json()).error ?? 'Failed.', { title: 'Error' }); return; }
     loadUsers();
@@ -84,9 +85,9 @@ export default function SettingsPage() {
     if (!invite.email) { setInviteError('Email is required.'); return; }
     setInviting(true); setInviteError('');
     const res = await fetch('/api/users/invite', {
-      method: 'POST',
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(invite),
+      body:    JSON.stringify(invite),
     });
     if (!res.ok) { setInviteError((await res.json()).error ?? 'Invite failed.'); setInviting(false); return; }
     setInviteModal(false);

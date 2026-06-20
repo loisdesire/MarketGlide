@@ -9,7 +9,11 @@ export async function GET() {
   if (!session) return jsonError('Unauthorized', 401);
 
   const admin = createAdminClient();
-  const { data, error } = await admin.from('sales').select('*').order('date', { ascending: false });
+  const { data, error } = await admin
+    .from('sales')
+    .select('*')
+    .eq('business_id', session.businessId)
+    .order('date', { ascending: false });
   if (error) return jsonError(error.message);
   return jsonOk(data);
 }
@@ -24,11 +28,12 @@ export async function POST(request: Request) {
 
   const admin = createAdminClient();
 
-  // Fetch the product
+  // Fetch the product — scoped to this business
   const { data: product, error: prodErr } = await admin
     .from('products')
     .select('id, stock_qty, cost_price, currency')
     .eq('id', body.product_id)
+    .eq('business_id', session.businessId)
     .single();
   if (prodErr || !product) return jsonError('Product not found.', 404);
 
@@ -50,12 +55,13 @@ export async function POST(request: Request) {
     const newQty = Math.max(0, product.stock_qty - qty);
     await admin.from('products').update({ stock_qty: newQty }).eq('id', body.product_id);
     await admin.from('inventory_adjustments').insert({
-      date: body.date ?? new Date().toISOString().slice(0, 10),
-      product_id: body.product_id,
-      qty_change: -qty,
-      reason: `Sale (invoice TBD)`,
+      date:        body.date ?? new Date().toISOString().slice(0, 10),
+      product_id:  body.product_id,
+      qty_change:  -qty,
+      reason:      `Sale (invoice TBD)`,
       source_type: 'sale',
-      created_by: session.userId,
+      business_id: session.businessId,
+      created_by:  session.userId,
     });
     stockDeducted = true;
   }
@@ -77,6 +83,7 @@ export async function POST(request: Request) {
       channel:        body.channel ?? 'Physical Store',
       status:         body.status ?? 'Pending',
       stock_deducted: stockDeducted,
+      business_id:    session.businessId,
       created_by:     session.userId,
     })
     .select()
@@ -90,6 +97,7 @@ export async function POST(request: Request) {
       .eq('source_type', 'sale')
       .eq('source_id', null as unknown as string)
       .eq('created_by', session.userId)
+      .eq('business_id', session.businessId)
       .order('created_at', { ascending: false })
       .limit(1);
   }
@@ -100,6 +108,7 @@ export async function POST(request: Request) {
       .from('customers')
       .select('total_orders, total_spent_usd')
       .eq('id', body.customer_id)
+      .eq('business_id', session.businessId)
       .single();
     if (cust) {
       const orders     = (cust.total_orders ?? 0) + 1;
@@ -109,8 +118,8 @@ export async function POST(request: Request) {
         orders > 1   ? 'Repeat Customer' :
                        'New Customer';
       await admin.from('customers').update({
-        total_orders:     orders,
-        total_spent_usd:  spentUSD,
+        total_orders:       orders,
+        total_spent_usd:    spentUSD,
         last_purchase_date: sale.date,
         classification,
       }).eq('id', body.customer_id);

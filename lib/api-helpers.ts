@@ -11,6 +11,7 @@ export async function getSessionUser() {
 export async function getSessionUserWithRole(): Promise<{
   userId: string;
   role: UserRole;
+  businessId: string;
 } | null> {
   const user = await getSessionUser();
   if (!user) return null;
@@ -18,12 +19,12 @@ export async function getSessionUserWithRole(): Promise<{
   const admin = createAdminClient();
   const { data } = await admin
     .from('user_profiles')
-    .select('role')
+    .select('role, business_id')
     .eq('id', user.id)
     .single();
 
-  if (!data?.role) return null;
-  return { userId: user.id, role: data.role as UserRole };
+  if (!data?.role || !data?.business_id) return null;
+  return { userId: user.id, role: data.role as UserRole, businessId: data.business_id };
 }
 
 export function jsonOk(data: unknown, status = 200) {

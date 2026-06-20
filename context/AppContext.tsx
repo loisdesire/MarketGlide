@@ -10,11 +10,13 @@ interface UserProfile {
   id: string;
   full_name: string;
   role: UserRole;
+  businessId: string;
 }
 
 interface AppContextValue {
   // Auth
   user: UserProfile | null;
+  businessId: string | null;
   // Currency
   displayCurrency: string;
   setDisplayCurrency: (c: string) => void;
@@ -76,6 +78,7 @@ export function AppProvider({ children, initialProfile }: {
   return (
     <AppContext.Provider value={{
       user,
+      businessId: user?.businessId ?? null,
       displayCurrency,
       setDisplayCurrency,
       rates,

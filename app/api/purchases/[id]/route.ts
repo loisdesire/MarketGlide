@@ -8,7 +8,11 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
 
   const { id } = await params;
   const admin   = createAdminClient();
-  const { error } = await admin.from('purchase_orders').delete().eq('id', id);
+  const { error } = await admin
+    .from('purchase_orders')
+    .delete()
+    .eq('id', id)
+    .eq('business_id', session.businessId);
   if (error) return jsonError(error.message);
   return jsonOk({ success: true });
 }

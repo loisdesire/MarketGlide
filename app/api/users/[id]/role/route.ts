@@ -17,6 +17,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     .from('user_profiles')
     .update({ role })
     .eq('id', id)
+    .eq('business_id', session.businessId)
     .select()
     .single();
   if (error) return jsonError(error.message);

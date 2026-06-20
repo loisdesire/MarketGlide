@@ -9,14 +9,15 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
   const { id } = await params;
   const admin   = createAdminClient();
 
-  // Fetch the PO
+  // Fetch the PO — scoped to this business
   const { data: po, error: poErr } = await admin
     .from('purchase_orders')
     .select('*')
     .eq('id', id)
+    .eq('business_id', session.businessId)
     .single();
   if (poErr || !po) return jsonError('Purchase order not found.', 404);
-  if (po.status === 'Received') return jsonError('This order has already been received.');
+  if (po.status === 'Received')  return jsonError('This order has already been received.');
   if (po.status === 'Cancelled') return jsonError('Cannot receive a cancelled order.');
 
   // Fetch the product
@@ -24,6 +25,7 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
     .from('products')
     .select('id, stock_qty, cost_price')
     .eq('id', po.product_id)
+    .eq('business_id', session.businessId)
     .single();
   if (prodErr || !product) return jsonError('Product not found.', 404);
 
@@ -44,13 +46,14 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
 
   // Log the inventory adjustment
   await admin.from('inventory_adjustments').insert({
-    date: new Date().toISOString().slice(0, 10),
-    product_id: po.product_id,
-    qty_change: po.qty,
-    reason: `Received PO ${po.po_number}`,
+    date:        new Date().toISOString().slice(0, 10),
+    product_id:  po.product_id,
+    qty_change:  po.qty,
+    reason:      `Received PO ${po.po_number}`,
     source_type: 'purchase',
-    source_id: id,
-    created_by: session.userId,
+    source_id:   id,
+    business_id: session.businessId,
+    created_by:  session.userId,
   });
 
   return jsonOk({ success: true, new_stock: newStock });
