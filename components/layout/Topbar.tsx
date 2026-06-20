@@ -1,5 +1,6 @@
 'use client';
 
+import { Menu } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { CURRENCY_CODES, CURRENCIES } from '@/lib/constants';
 
@@ -17,19 +18,28 @@ const PAGE_META: Record<string, [string, string]> = {
 };
 
 export default function Topbar({ page }: { page: string }) {
-  const { displayCurrency, setDisplayCurrency, ratesLive } = useApp();
+  const { displayCurrency, setDisplayCurrency, ratesLive, setSidebarOpen } = useApp();
   const [title, sub] = PAGE_META[page] ?? ['', ''];
 
   return (
     <div className="topbar">
-      <div>
-        <h2>{title}</h2>
-        <div className="pagesub">{sub}</div>
+      <div className="topbar-left">
+        <button
+          className="menu-toggle"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open menu"
+        >
+          <Menu size={22} />
+        </button>
+        <div>
+          <h2>{title}</h2>
+          <div className="pagesub">{sub}</div>
+        </div>
       </div>
       <div className="topbar-right">
         <div className="ratepill">
           <span className={ratesLive ? 'dot-live' : 'dot-off'} />
-          <span>{ratesLive ? 'Live exchange rates' : 'Indicative rates (offline)'}</span>
+          <span className="rate-label">{ratesLive ? 'Live rates' : 'Offline rates'}</span>
         </div>
         <div className="curwrap">
           <label>Display in</label>

@@ -24,6 +24,9 @@ interface AppContextValue {
   convert: (amount: number, from: string) => number;
   fmt: (amount: number, from: string) => string;
   fmtNative: (amount: number, cur: string) => string;
+  // Mobile sidebar
+  sidebarOpen: boolean;
+  setSidebarOpen: (v: boolean) => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -36,6 +39,7 @@ export function AppProvider({ children, initialProfile }: {
   const [displayCurrency, setDisplayCurrencyState] = useState('USD');
   const [rates, setRates] = useState<Rates>(FALLBACK_RATES);
   const [ratesLive, setRatesLive] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Persist display currency
   const setDisplayCurrency = useCallback((c: string) => {
@@ -79,6 +83,8 @@ export function AppProvider({ children, initialProfile }: {
       convert: ctxConvert,
       fmt: ctxFmt,
       fmtNative: ctxFmtNative,
+      sidebarOpen,
+      setSidebarOpen,
     }}>
       {children}
     </AppContext.Provider>
