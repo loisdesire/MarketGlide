@@ -23,8 +23,9 @@ export async function POST(request: Request) {
   const newQty = product.stock_qty + qty_change;
   if (newQty < 0) return jsonError('Adjustment would result in negative stock.');
 
-  await admin.from('products').update({ stock_qty: newQty }).eq('id', product_id);
-  await admin.from('inventory_adjustments').insert({
+  const { error: stockErr } = await admin.from('products').update({ stock_qty: newQty }).eq('id', product_id).eq('business_id', session.businessId);
+  if (stockErr) return jsonError(stockErr.message);
+  const { error: adjErr } = await admin.from('inventory_adjustments').insert({
     date:        new Date().toISOString().slice(0, 10),
     product_id,
     qty_change,
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
     business_id: session.businessId,
     created_by:  session.userId,
   });
+  if (adjErr) return jsonError(adjErr.message);
 
   return jsonOk({ success: true, new_stock: newQty });
 }

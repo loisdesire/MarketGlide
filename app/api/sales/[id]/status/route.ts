@@ -25,6 +25,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     .from('products')
     .select('id, stock_qty')
     .eq('id', sale.product_id)
+    .eq('business_id', session.businessId)
     .single();
 
   const wasRestock  = RESTOCK_STATUSES.includes(sale.status);
@@ -34,8 +35,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (!wasRestock && willRestock) {
     // Moving TO cancelled/refunded → return stock
     newStockQty = newStockQty + sale.qty;
-    await admin.from('products').update({ stock_qty: newStockQty }).eq('id', sale.product_id);
-    await admin.from('inventory_adjustments').insert({
+    const { error: stockErr } = await admin.from('products').update({ stock_qty: newStockQty }).eq('id', sale.product_id).eq('business_id', session.businessId);
+    if (stockErr) return jsonError(stockErr.message);
+    const { error: adjErr1 } = await admin.from('inventory_adjustments').insert({
       date:        new Date().toISOString().slice(0, 10),
       product_id:  sale.product_id,
       qty_change:  sale.qty,
@@ -45,6 +47,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       business_id: session.businessId,
       created_by:  session.userId,
     });
+    if (adjErr1) return jsonError(adjErr1.message);
 
   } else if (wasRestock && !willRestock) {
     // Moving FROM cancelled/refunded → re-deduct stock
@@ -55,8 +58,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       }, { status: 409 });
     }
     newStockQty = Math.max(0, newStockQty - sale.qty);
-    await admin.from('products').update({ stock_qty: newStockQty }).eq('id', sale.product_id);
-    await admin.from('inventory_adjustments').insert({
+    const { error: stockErr2 } = await admin.from('products').update({ stock_qty: newStockQty }).eq('id', sale.product_id).eq('business_id', session.businessId);
+    if (stockErr2) return jsonError(stockErr2.message);
+    const { error: adjErr2 } = await admin.from('inventory_adjustments').insert({
       date:        new Date().toISOString().slice(0, 10),
       product_id:  sale.product_id,
       qty_change:  -sale.qty,
@@ -66,13 +70,15 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       business_id: session.businessId,
       created_by:  session.userId,
     });
+    if (adjErr2) return jsonError(adjErr2.message);
   }
 
-  await admin.from('sales').update({
+  const { error: saleUpdateErr } = await admin.from('sales').update({
     status:         newStatus,
     stock_deducted: !willRestock,
     updated_by:     session.userId,
   }).eq('id', id).eq('business_id', session.businessId);
+  if (saleUpdateErr) return jsonError(saleUpdateErr.message);
 
   return jsonOk({ success: true, new_stock: newStockQty });
 }

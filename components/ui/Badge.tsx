@@ -22,7 +22,6 @@ const TAG_CLASS: Record<string, string> = {
   'In Transit':     'tag-in-transit',
   Received:         'tag-received',
   // Returns
-  Refunded2:        'tag-paid',
   Denied:           'tag-cancelled',
   // Customers
   'New Customer':   'tag-new',

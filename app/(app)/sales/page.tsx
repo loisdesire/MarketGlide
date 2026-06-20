@@ -8,7 +8,7 @@ import { useDialog } from '@/context/DialogContext';
 import Topbar from '@/components/layout/Topbar';
 import Modal from '@/components/ui/Modal';
 import EmptyState from '@/components/ui/EmptyState';
-import { CHANNELS, PAYMENT_METHODS, SALE_STATUSES, CURRENCY_CODES, RESTOCK_STATUSES } from '@/lib/constants';
+import { CHANNELS, PAYMENT_METHODS, SALE_STATUSES, CURRENCY_CODES } from '@/lib/constants';
 
 interface Product { id: string; name: string; sku: string; sell_price: number; currency: string; stock_qty: number; }
 interface Customer { id: string; name: string; }
@@ -37,7 +37,7 @@ export default function SalesPage() {
   const [products, setProducts]   = useState<Product[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [modal, setModal]         = useState(false);
-  const [form, setForm]           = useState<Partial<Sale & { _productPrice: number; _productCur: string }>>({});
+  const [form, setForm]           = useState<Partial<Sale>>({});
   const [saving, setSaving]       = useState(false);
   const [error, setError]         = useState('');
 

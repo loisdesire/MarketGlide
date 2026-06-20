@@ -52,9 +52,14 @@ export async function POST(request: Request) {
   // Deduct stock for active statuses
   let stockDeducted = false;
   if (!isRestockStatus) {
-    const newQty = Math.max(0, product.stock_qty - qty);
-    await admin.from('products').update({ stock_qty: newQty }).eq('id', body.product_id);
-    await admin.from('inventory_adjustments').insert({
+    const newQty = product.stock_qty - qty;
+    const { error: stockErr } = await admin
+      .from('products')
+      .update({ stock_qty: newQty })
+      .eq('id', body.product_id)
+      .eq('business_id', session.businessId);
+    if (stockErr) return jsonError(stockErr.message);
+    const { error: adjErr } = await admin.from('inventory_adjustments').insert({
       date:        body.date ?? new Date().toISOString().slice(0, 10),
       product_id:  body.product_id,
       qty_change:  -qty,
@@ -63,6 +68,7 @@ export async function POST(request: Request) {
       business_id: session.businessId,
       created_by:  session.userId,
     });
+    if (adjErr) return jsonError(adjErr.message);
     stockDeducted = true;
   }
 
@@ -95,7 +101,7 @@ export async function POST(request: Request) {
     await admin.from('inventory_adjustments')
       .update({ reason: `Sale ${sale.invoice_number}`, source_id: sale.id })
       .eq('source_type', 'sale')
-      .eq('source_id', null as unknown as string)
+      .is('source_id', null)
       .eq('created_by', session.userId)
       .eq('business_id', session.businessId)
       .order('created_at', { ascending: false })

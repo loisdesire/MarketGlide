@@ -24,7 +24,7 @@ export async function POST(request: Request) {
   if (error) return jsonError(error.message);
 
   // Upsert profile with the same business_id as the inviting admin
-  await admin.from('user_profiles').upsert(
+  const { error: profileErr } = await admin.from('user_profiles').upsert(
     {
       id:          data.user.id,
       full_name:   full_name ?? '',
@@ -33,6 +33,10 @@ export async function POST(request: Request) {
     },
     { onConflict: 'id' },
   );
+  if (profileErr) {
+    await admin.auth.admin.deleteUser(data.user.id);
+    return jsonError(profileErr.message);
+  }
 
   return jsonOk({ id: data.user.id, email: data.user.email });
 }

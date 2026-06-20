@@ -80,7 +80,7 @@ CREATE POLICY "user_profiles_select" ON user_profiles FOR SELECT
   USING (business_id = auth_business_id() OR id = auth.uid());
 
 CREATE POLICY "user_profiles_insert" ON user_profiles FOR INSERT
-  WITH CHECK (true);
+  WITH CHECK (id = auth.uid() AND business_id IS NULL);
 
 CREATE POLICY "user_profiles_update" ON user_profiles FOR UPDATE
   USING (id = auth.uid() OR (business_id = auth_business_id() AND auth_role() = 'Administrator'));
@@ -182,6 +182,17 @@ CREATE POLICY "adj_insert" ON inventory_adjustments FOR INSERT
   WITH CHECK (business_id = auth_business_id() AND auth_role() IN ('Administrator', 'Manager', 'Warehouse Staff'));
 
 -- ── 8. updated_at trigger for businesses ─────────────────────
+DROP TRIGGER IF EXISTS businesses_updated_at ON businesses;
 CREATE TRIGGER businesses_updated_at
   BEFORE UPDATE ON businesses
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+-- ── 9. Retire orphaned trigger on business_settings ───────────
+DROP TRIGGER IF EXISTS biz_settings_updated_at ON business_settings;
+
+-- ── 10. Fix SKU uniqueness — global → business-scoped ─────────
+-- Allows multiple products with empty/absent SKU; enforces
+-- unique non-empty SKU per business only.
+ALTER TABLE products DROP CONSTRAINT IF EXISTS products_sku_key;
+CREATE UNIQUE INDEX IF NOT EXISTS products_sku_business_unique
+  ON products (business_id, sku) WHERE sku IS NOT NULL AND sku <> '';

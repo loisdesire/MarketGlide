@@ -11,12 +11,14 @@ interface UserProfile {
   full_name: string;
   role: UserRole;
   businessId: string;
+  businessName: string;
 }
 
 interface AppContextValue {
   // Auth
   user: UserProfile | null;
   businessId: string | null;
+  businessName: string;
   // Currency
   displayCurrency: string;
   setDisplayCurrency: (c: string) => void;
@@ -43,7 +45,6 @@ export function AppProvider({ children, initialProfile }: {
   const [ratesLive, setRatesLive] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Persist display currency
   const setDisplayCurrency = useCallback((c: string) => {
     setDisplayCurrencyState(c);
     localStorage.setItem('mg_display_currency', c);
@@ -53,7 +54,6 @@ export function AppProvider({ children, initialProfile }: {
     const saved = localStorage.getItem('mg_display_currency');
     if (saved) setDisplayCurrencyState(saved);
 
-    // Fetch live rates via our proxy route
     fetch('/api/rates')
       .then(r => r.json())
       .then(data => {
@@ -65,27 +65,22 @@ export function AppProvider({ children, initialProfile }: {
       .catch(() => {});
   }, []);
 
-  const ctxConvert = useCallback(
-    (amount: number, from: string) => convert(amount, from, displayCurrency, rates),
-    [displayCurrency, rates],
-  );
-  const ctxFmt = useCallback(
-    (amount: number, from: string) => fmtFn(amount, from, displayCurrency, rates),
-    [displayCurrency, rates],
-  );
+  const ctxConvert   = useCallback((amount: number, from: string) => convert(amount, from, displayCurrency, rates), [displayCurrency, rates]);
+  const ctxFmt       = useCallback((amount: number, from: string) => fmtFn(amount, from, displayCurrency, rates), [displayCurrency, rates]);
   const ctxFmtNative = useCallback(fmtNativeFn, []);
 
   return (
     <AppContext.Provider value={{
       user,
-      businessId: user?.businessId ?? null,
+      businessId:   user?.businessId   ?? null,
+      businessName: user?.businessName ?? '',
       displayCurrency,
       setDisplayCurrency,
       rates,
       ratesLive,
-      convert: ctxConvert,
-      fmt: ctxFmt,
-      fmtNative: ctxFmtNative,
+      convert:    ctxConvert,
+      fmt:        ctxFmt,
+      fmtNative:  ctxFmtNative,
       sidebarOpen,
       setSidebarOpen,
     }}>
@@ -100,7 +95,6 @@ export function useApp() {
   return ctx;
 }
 
-// Convenience: sign out
 export async function signOut() {
   const supabase = createClient();
   await supabase.auth.signOut();

@@ -26,7 +26,7 @@ interface Props {
 }
 
 export default function Sidebar({ lowStockCount }: Props) {
-  const { user, sidebarOpen, setSidebarOpen } = useApp();
+  const { user, businessName, sidebarOpen, setSidebarOpen } = useApp();
   const pathname = usePathname();
   const router   = useRouter();
 
@@ -51,7 +51,7 @@ export default function Sidebar({ lowStockCount }: Props) {
         <div className="brand">
           <div className="brand-mark">
             <span className="brand-dot" />
-            <h1>Market Glide<br />Solutions</h1>
+            <h1>{businessName || 'My Business'}</h1>
           </div>
           <button
             className="sidebar-close"

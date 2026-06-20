@@ -31,20 +31,24 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!profile) redirect('/login');
   if (!profile.business_id) redirect('/register');
 
-  const { data: rawProducts } = await admin
-    .from('products')
-    .select('stock_qty, reorder_level')
-    .eq('business_id', profile.business_id);
+  // Fetch business name and low-stock count in parallel
+  const [{ data: rawBusiness }, { data: rawProducts }] = await Promise.all([
+    admin.from('businesses').select('name').eq('id', profile.business_id).single(),
+    admin.from('products').select('stock_qty, reorder_level').eq('business_id', profile.business_id),
+  ]);
 
-  const products = (rawProducts ?? []) as { stock_qty: number; reorder_level: number }[];
-
+  const businessName = (rawBusiness as { name: string } | null)?.name ?? '';
+  const products     = (rawProducts ?? []) as { stock_qty: number; reorder_level: number }[];
   const lowStockCount = products.filter(p => p.stock_qty <= p.reorder_level).length;
 
+  const businessNameStr: string = businessName;
+
   const userProfile = {
-    id:         profile.id,
-    full_name:  profile.full_name,
-    role:       profile.role as UserRole,
-    businessId: profile.business_id,
+    id:           profile.id          as string,
+    full_name:    profile.full_name   as string,
+    role:         profile.role        as UserRole,
+    businessId:   profile.business_id as string,  // narrowed above by redirect
+    businessName: businessNameStr,
   };
 
   return (

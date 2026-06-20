@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { createClient } from '@/lib/supabase/server';
 import { FALLBACK_RATES } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   const admin = createAdminClient();
   const { data: cache } = await admin.from('exchange_rate_cache').select('*').eq('id', 1).single();
 

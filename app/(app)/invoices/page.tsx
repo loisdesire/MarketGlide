@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { Printer } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { useApp } from '@/context/AppContext';
 import Topbar from '@/components/layout/Topbar';
 import { fmtNative } from '@/lib/currency';
 
@@ -18,7 +17,6 @@ interface Customer { id: string; name: string; email: string; phone: string; add
 interface Product { id: string; name: string; sku: string; }
 
 export default function InvoicesPage() {
-  const { } = useApp();
   const [sales, setSales]         = useState<Sale[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [products, setProducts]   = useState<Product[]>([]);

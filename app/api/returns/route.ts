@@ -46,11 +46,13 @@ export async function POST(request: Request) {
       .from('products')
       .select('stock_qty')
       .eq('id', sale.product_id)
+      .eq('business_id', session.businessId)
       .single();
     if (product) {
       const newQty = (product.stock_qty ?? 0) + (body.qty ?? 1);
-      await admin.from('products').update({ stock_qty: newQty }).eq('id', sale.product_id);
-      await admin.from('inventory_adjustments').insert({
+      const { error: stockErr } = await admin.from('products').update({ stock_qty: newQty }).eq('id', sale.product_id).eq('business_id', session.businessId);
+      if (stockErr) return jsonError(stockErr.message);
+      const { error: adjErr } = await admin.from('inventory_adjustments').insert({
         date:        body.date ?? new Date().toISOString().slice(0, 10),
         product_id:  sale.product_id,
         qty_change:  body.qty ?? 1,
@@ -60,6 +62,7 @@ export async function POST(request: Request) {
         business_id: session.businessId,
         created_by:  session.userId,
       });
+      if (adjErr) return jsonError(adjErr.message);
     }
   }
 

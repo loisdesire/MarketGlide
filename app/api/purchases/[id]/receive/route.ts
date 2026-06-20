@@ -41,11 +41,12 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
   const { error: prodUpdateErr } = await admin
     .from('products')
     .update({ stock_qty: newStock, cost_price: po.unit_landed_cost || product.cost_price })
-    .eq('id', po.product_id);
+    .eq('id', po.product_id)
+    .eq('business_id', session.businessId);
   if (prodUpdateErr) return jsonError(prodUpdateErr.message);
 
   // Log the inventory adjustment
-  await admin.from('inventory_adjustments').insert({
+  const { error: adjErr } = await admin.from('inventory_adjustments').insert({
     date:        new Date().toISOString().slice(0, 10),
     product_id:  po.product_id,
     qty_change:  po.qty,
@@ -55,6 +56,7 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
     business_id: session.businessId,
     created_by:  session.userId,
   });
+  if (adjErr) return jsonError(adjErr.message);
 
   return jsonOk({ success: true, new_stock: newStock });
 }

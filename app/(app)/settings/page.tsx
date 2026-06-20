@@ -1,36 +1,45 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-// createClient used only for user list (RLS-scoped to same business via policies)
 import { useDialog } from '@/context/DialogContext';
 import Topbar from '@/components/layout/Topbar';
 import Modal from '@/components/ui/Modal';
 import { ROLE_DESCRIPTIONS } from '@/lib/permissions';
 
 interface Business    { name: string; email: string; address: string; }
-interface UserProfile { id: string; full_name: string; role: string; }
+interface TeamMember  { id: string; full_name: string; email: string; role: string; }
 
 const ROLES = ['Administrator', 'Manager', 'Sales Staff', 'Warehouse Staff'] as const;
 
 const BLANK_INVITE = { email: '', full_name: '', password: '', role: 'Sales Staff' as string };
+const BLANK_EDIT   = { full_name: '', email: '', role: '' as string, password: '' };
 
 export default function SettingsPage() {
   const { user } = useApp();
   const dialog   = useDialog();
 
+  // Business profile
   const [biz, setBiz]           = useState<Business>({ name: '', email: '', address: '' });
-  const [users, setUsers]       = useState<UserProfile[]>([]);
-  const [saved, setSaved]       = useState(false);
   const [saving, setSaving]     = useState(false);
+  const [saved, setSaved]       = useState(false);
   const [bizError, setBizError] = useState('');
 
-  const [inviteModal, setInviteModal] = useState(false);
-  const [invite, setInvite]           = useState(BLANK_INVITE);
-  const [inviting, setInviting]       = useState(false);
+  // User list
+  const [users, setUsers]       = useState<TeamMember[]>([]);
+
+  // Add user modal
+  const [addModal, setAddModal]     = useState(false);
+  const [invite, setInvite]         = useState(BLANK_INVITE);
+  const [inviting, setInviting]     = useState(false);
   const [inviteError, setInviteError] = useState('');
+
+  // Edit user modal
+  const [editTarget, setEditTarget] = useState<TeamMember | null>(null);
+  const [edit, setEdit]             = useState(BLANK_EDIT);
+  const [editing, setEditing]       = useState(false);
+  const [editError, setEditError]   = useState('');
 
   async function loadBiz() {
     const res = await fetch('/api/settings');
@@ -38,9 +47,8 @@ export default function SettingsPage() {
   }
 
   async function loadUsers() {
-    const supabase = createClient();
-    const { data } = await supabase.from('user_profiles').select('id,full_name,role').order('full_name');
-    setUsers((data ?? []) as UserProfile[]);
+    const res = await fetch('/api/users');
+    if (res.ok) setUsers(await res.json());
   }
 
   useEffect(() => {
@@ -48,6 +56,7 @@ export default function SettingsPage() {
     loadUsers();
   }, []);
 
+  // ── Business profile ────────────────────────────────────────
   async function saveBiz() {
     setSaving(true); setBizError(''); setSaved(false);
     const res = await fetch('/api/settings', {
@@ -60,39 +69,64 @@ export default function SettingsPage() {
     setTimeout(() => setSaved(false), 2000);
   }
 
-  async function changeRole(userId: string, newRole: string) {
-    if (!await dialog.confirm(`Change this user's role to "${newRole}"?`, { title: 'Change Role', confirmLabel: 'Change Role' })) return;
-    const res = await fetch(`/api/users/${userId}/role`, {
-      method:  'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ role: newRole }),
-    });
-    if (!res.ok) { await dialog.alert((await res.json()).error ?? 'Failed.', { title: 'Error' }); return; }
-    loadUsers();
-  }
-
-  async function removeUser(u: UserProfile) {
-    if (!await dialog.confirm(
-      `Remove ${u.full_name || u.role} from the team? They will lose all access immediately.`,
-      { title: 'Remove User', confirmLabel: 'Remove', variant: 'danger' },
-    )) return;
-    const res = await fetch(`/api/users/${u.id}`, { method: 'DELETE' });
-    if (!res.ok) { await dialog.alert((await res.json()).error ?? 'Failed.', { title: 'Error' }); return; }
-    loadUsers();
-  }
-
+  // ── Add user ────────────────────────────────────────────────
   async function sendInvite() {
-    if (!invite.email) { setInviteError('Email is required.'); return; }
+    if (!invite.email)    { setInviteError('Email is required.'); return; }
+    if (!invite.password) { setInviteError('Password is required.'); return; }
     setInviting(true); setInviteError('');
     const res = await fetch('/api/users/invite', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(invite),
     });
-    if (!res.ok) { setInviteError((await res.json()).error ?? 'Invite failed.'); setInviting(false); return; }
-    setInviteModal(false);
+    if (!res.ok) { setInviteError((await res.json()).error ?? 'Failed.'); setInviting(false); return; }
+    setAddModal(false);
     setInvite(BLANK_INVITE);
     setInviting(false);
+    loadUsers();
+  }
+
+  // ── Edit user ───────────────────────────────────────────────
+  function openEdit(u: TeamMember) {
+    setEditTarget(u);
+    setEdit({ full_name: u.full_name, email: u.email, role: u.role, password: '' });
+    setEditError('');
+  }
+
+  async function saveEdit() {
+    if (!editTarget) return;
+    if (edit.password && edit.password.length < 6) {
+      setEditError('Password must be at least 6 characters, or leave blank to keep current.');
+      return;
+    }
+    setEditing(true); setEditError('');
+
+    const payload: Record<string, string> = {
+      full_name: edit.full_name,
+      email:     edit.email,
+      role:      edit.role,
+    };
+    if (edit.password) payload.password = edit.password;
+
+    const res = await fetch(`/api/users/${editTarget.id}`, {
+      method:  'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
+    if (!res.ok) { setEditError((await res.json()).error ?? 'Update failed.'); setEditing(false); return; }
+    setEditing(false);
+    setEditTarget(null);
+    loadUsers();
+  }
+
+  // ── Remove user ─────────────────────────────────────────────
+  async function removeUser(u: TeamMember) {
+    if (!await dialog.confirm(
+      `Remove ${u.full_name || u.email} from the team? They will lose all access immediately.`,
+      { title: 'Remove User', confirmLabel: 'Remove', variant: 'danger' },
+    )) return;
+    const res = await fetch(`/api/users/${u.id}`, { method: 'DELETE' });
+    if (!res.ok) { await dialog.alert((await res.json()).error ?? 'Failed.', { title: 'Error' }); return; }
     loadUsers();
   }
 
@@ -112,7 +146,7 @@ export default function SettingsPage() {
       <Topbar page="settings" />
       <div className="page-content">
 
-        {/* Business Profile */}
+        {/* ── Business Profile ───────────────────────────────── */}
         <div className="panel" style={{ maxWidth: 560 }}>
           <div className="panel-head"><h3>Business Profile</h3></div>
           <div className="panel-body">
@@ -143,11 +177,11 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Team Members */}
-        <div className="panel" style={{ maxWidth: 760 }}>
+        {/* ── Team Management ────────────────────────────────── */}
+        <div className="panel" style={{ maxWidth: 860 }}>
           <div className="panel-head">
-            <h3>Team Members</h3>
-            <button className="btn btn-primary btn-sm" onClick={() => { setInvite(BLANK_INVITE); setInviteError(''); setInviteModal(true); }}>
+            <h3>Team Management</h3>
+            <button className="btn btn-primary btn-sm" onClick={() => { setInvite(BLANK_INVITE); setInviteError(''); setAddModal(true); }}>
               <Plus size={13} /> Add User
             </button>
           </div>
@@ -155,46 +189,66 @@ export default function SettingsPage() {
             {users.length ? (
               <table>
                 <thead>
-                  <tr><th>Name</th><th>Role</th><th>Change Role</th><th></th></tr>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th style={{ width: 80 }}>Actions</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  {users.map(u => (
-                    <tr key={u.id}>
-                      <td><b>{u.full_name || <span className="muted">No name yet</span>}</b></td>
-                      <td>{u.role}</td>
-                      <td>
-                        {u.id !== user?.id ? (
-                          <select
-                            value={u.role}
-                            onChange={e => changeRole(u.id, e.target.value)}
-                            style={{ width: 'auto' }}
-                          >
-                            {ROLES.map(r => <option key={r}>{r}</option>)}
-                          </select>
-                        ) : (
-                          <span className="muted" style={{ fontSize: 12 }}>(you)</span>
-                        )}
-                      </td>
-                      <td>
-                        {u.id !== user?.id && (
-                          <button
-                            className="btn btn-ghost btn-sm btn-icon"
-                            onClick={() => removeUser(u)}
-                            title="Remove user"
-                          >
-                            <Trash2 size={13} style={{ color: 'var(--danger)' }} />
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                  {users.map(u => {
+                    const isMe = u.id === user?.id;
+                    return (
+                      <tr key={u.id}>
+                        <td>
+                          <b>{u.full_name || <span className="muted">—</span>}</b>
+                          {isMe && <span className="muted" style={{ fontSize: 11, marginLeft: 6 }}>(you)</span>}
+                        </td>
+                        <td className="muted" style={{ fontSize: 12.5 }}>{u.email}</td>
+                        <td>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '2px 8px',
+                            borderRadius: 4,
+                            fontSize: 11.5,
+                            fontWeight: 600,
+                            background: u.role === 'Administrator' ? 'var(--purple-light,#ede9fe)' : 'var(--grey-100)',
+                            color: u.role === 'Administrator' ? 'var(--purple-dark)' : 'var(--grey-700)',
+                          }}>
+                            {u.role}
+                          </span>
+                        </td>
+                        <td>
+                          {!isMe && (
+                            <div style={{ display: 'flex', gap: 4 }}>
+                              <button
+                                className="btn btn-ghost btn-sm btn-icon"
+                                onClick={() => openEdit(u)}
+                                title="Edit user"
+                              >
+                                <Pencil size={13} />
+                              </button>
+                              <button
+                                className="btn btn-ghost btn-sm btn-icon"
+                                onClick={() => removeUser(u)}
+                                title="Remove user"
+                              >
+                                <Trash2 size={13} style={{ color: 'var(--danger)' }} />
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
-            ) : <p className="muted">No team members yet. Invite someone to get started.</p>}
+            ) : <p className="muted">No team members yet.</p>}
           </div>
         </div>
 
-        {/* Role Permissions Reference */}
+        {/* ── Role Permissions Reference ─────────────────────── */}
         <div className="panel" style={{ maxWidth: 760 }}>
           <div className="panel-head"><h3>Role Permissions Reference</h3></div>
           <div className="panel-body flush scroll-x">
@@ -210,9 +264,9 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Invite User Modal */}
-      {inviteModal && (
-        <Modal onClose={() => setInviteModal(false)} title="Add Team Member">
+      {/* ── Add User Modal ───────────────────────────────────── */}
+      {addModal && (
+        <Modal onClose={() => setAddModal(false)} title="Add Team Member">
           <p className="footnote" style={{ marginTop: 0, marginBottom: 16 }}>
             Create the account and share the credentials with the user directly.
           </p>
@@ -254,9 +308,57 @@ export default function SettingsPage() {
             </div>
           </div>
           <div className="formfoot">
-            <button className="btn btn-ghost" onClick={() => setInviteModal(false)}>Cancel</button>
+            <button className="btn btn-ghost" onClick={() => setAddModal(false)}>Cancel</button>
             <button className="btn btn-primary" onClick={sendInvite} disabled={inviting}>
               {inviting ? 'Creating…' : 'Create Account'}
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {/* ── Edit User Modal ──────────────────────────────────── */}
+      {editTarget && (
+        <Modal onClose={() => setEditTarget(null)} title="Edit Team Member">
+          {editError && <div className="alertbox" style={{ marginBottom: 12 }}><span>{editError}</span></div>}
+          <div className="form-grid">
+            <div className="field field-span2">
+              <label>Full Name</label>
+              <input
+                value={edit.full_name}
+                onChange={e => setEdit(v => ({ ...v, full_name: e.target.value }))}
+                placeholder="Jane Smith"
+                autoFocus
+              />
+            </div>
+            <div className="field field-span2">
+              <label>Email Address</label>
+              <input
+                type="email"
+                value={edit.email}
+                onChange={e => setEdit(v => ({ ...v, email: e.target.value }))}
+              />
+            </div>
+            <div className="field field-span2">
+              <label>Role</label>
+              <select value={edit.role} onChange={e => setEdit(v => ({ ...v, role: e.target.value }))}>
+                {ROLES.map(r => <option key={r}>{r}</option>)}
+              </select>
+              <span className="hint">{ROLE_DESCRIPTIONS[edit.role as keyof typeof ROLE_DESCRIPTIONS]}</span>
+            </div>
+            <div className="field field-span2">
+              <label>New Password</label>
+              <input
+                type="password"
+                value={edit.password}
+                onChange={e => setEdit(v => ({ ...v, password: e.target.value }))}
+                placeholder="Leave blank to keep current password"
+              />
+            </div>
+          </div>
+          <div className="formfoot">
+            <button className="btn btn-ghost" onClick={() => setEditTarget(null)}>Cancel</button>
+            <button className="btn btn-primary" onClick={saveEdit} disabled={editing}>
+              {editing ? 'Saving…' : 'Save Changes'}
             </button>
           </div>
         </Modal>
