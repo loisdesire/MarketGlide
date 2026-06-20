@@ -14,7 +14,7 @@ interface UserProfile { id: string; full_name: string; role: string; }
 
 const ROLES = ['Administrator', 'Manager', 'Sales Staff', 'Warehouse Staff'] as const;
 
-const BLANK_INVITE = { email: '', full_name: '', role: 'Sales Staff' as string };
+const BLANK_INVITE = { email: '', full_name: '', password: '', role: 'Sales Staff' as string };
 
 export default function SettingsPage() {
   const { user } = useApp();
@@ -147,7 +147,7 @@ export default function SettingsPage() {
           <div className="panel-head">
             <h3>Team Members</h3>
             <button className="btn btn-primary btn-sm" onClick={() => { setInvite(BLANK_INVITE); setInviteError(''); setInviteModal(true); }}>
-              <Plus size={13} /> Invite User
+              <Plus size={13} /> Add User
             </button>
           </div>
           <div className="panel-body flush scroll-x">
@@ -211,12 +211,21 @@ export default function SettingsPage() {
 
       {/* Invite User Modal */}
       {inviteModal && (
-        <Modal onClose={() => setInviteModal(false)} title="Invite Team Member">
+        <Modal onClose={() => setInviteModal(false)} title="Add Team Member">
           <p className="footnote" style={{ marginTop: 0, marginBottom: 16 }}>
-            The user will receive an email with a link to set their password and join the team.
+            Create the account and share the credentials with the user directly.
           </p>
           {inviteError && <div className="alertbox" style={{ marginBottom: 12 }}><span>{inviteError}</span></div>}
           <div className="form-grid">
+            <div className="field field-span2">
+              <label>Full Name</label>
+              <input
+                placeholder="Jane Smith"
+                value={invite.full_name}
+                onChange={e => setInvite(i => ({ ...i, full_name: e.target.value }))}
+                autoFocus
+              />
+            </div>
             <div className="field field-span2">
               <label>Email Address *</label>
               <input
@@ -224,15 +233,15 @@ export default function SettingsPage() {
                 placeholder="colleague@example.com"
                 value={invite.email}
                 onChange={e => setInvite(i => ({ ...i, email: e.target.value }))}
-                autoFocus
               />
             </div>
             <div className="field field-span2">
-              <label>Full Name</label>
+              <label>Password *</label>
               <input
-                placeholder="Jane Smith"
-                value={invite.full_name}
-                onChange={e => setInvite(i => ({ ...i, full_name: e.target.value }))}
+                type="password"
+                placeholder="Min. 6 characters"
+                value={invite.password}
+                onChange={e => setInvite(i => ({ ...i, password: e.target.value }))}
               />
             </div>
             <div className="field field-span2">
@@ -246,7 +255,7 @@ export default function SettingsPage() {
           <div className="formfoot">
             <button className="btn btn-ghost" onClick={() => setInviteModal(false)}>Cancel</button>
             <button className="btn btn-primary" onClick={sendInvite} disabled={inviting}>
-              {inviting ? 'Sending…' : 'Send Invite'}
+              {inviting ? 'Creating…' : 'Create Account'}
             </button>
           </div>
         </Modal>
