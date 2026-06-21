@@ -20,14 +20,17 @@ export async function POST(request: Request) {
   if (!session) return jsonError('Unauthorized', 401);
   if (!['Administrator', 'Manager'].includes(session.role)) return jsonError('Forbidden', 403);
 
-  const body = await request.json();
+  const body = await request.json() as Record<string, unknown>;
   if (!body.supplier)   return jsonError('Supplier name is required.');
   if (!body.product_id) return jsonError('Product is required.');
+
+  const ALLOWED = new Set(['supplier', 'product_id', 'qty_ordered', 'unit_cost', 'currency', 'date_ordered', 'notes', 'status']);
+  const safeBody = Object.fromEntries(Object.entries(body).filter(([k]) => ALLOWED.has(k)));
 
   const admin = createAdminClient();
   const { data, error } = await admin
     .from('purchase_orders')
-    .insert({ ...body, business_id: session.businessId, created_by: session.userId })
+    .insert({ ...safeBody, business_id: session.businessId, created_by: session.userId })
     .select()
     .single();
   if (error) return jsonError(error.message);

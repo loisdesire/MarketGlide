@@ -8,6 +8,10 @@ export async function POST(request: Request) {
 
   const body = await request.json();
   if (!body.sale_id) return jsonError('Sale is required.');
+  const qty = parseInt(String(body.qty ?? 1), 10);
+  if (isNaN(qty) || qty < 1) return jsonError('Quantity must be a positive whole number.', 400);
+  const refundAmount = parseFloat(String(body.refund_amount ?? 0));
+  if (isNaN(refundAmount) || refundAmount < 0) return jsonError('Refund amount must be a non-negative number.', 400);
 
   const admin = createAdminClient();
 
@@ -26,9 +30,9 @@ export async function POST(request: Request) {
     .insert({
       sale_id:       body.sale_id,
       date:          body.date,
-      qty:           body.qty ?? 1,
+      qty,
       reason:        body.reason ?? 'Defective',
-      refund_amount: body.refund_amount ?? 0,
+      refund_amount: refundAmount,
       currency:      body.currency ?? 'USD',
       status:        body.status ?? 'Pending',
       restock:       body.restock ?? true,
@@ -49,13 +53,13 @@ export async function POST(request: Request) {
       .eq('business_id', session.businessId)
       .single();
     if (product) {
-      const newQty = (product.stock_qty ?? 0) + (body.qty ?? 1);
+      const newQty = (product.stock_qty ?? 0) + qty;
       const { error: stockErr } = await admin.from('products').update({ stock_qty: newQty }).eq('id', sale.product_id).eq('business_id', session.businessId);
       if (stockErr) return jsonError(stockErr.message);
       const { error: adjErr } = await admin.from('inventory_adjustments').insert({
         date:        body.date ?? new Date().toISOString().slice(0, 10),
         product_id:  sale.product_id,
-        qty_change:  body.qty ?? 1,
+        qty_change:  qty,
         reason:      `Customer return for ${sale.invoice_number}`,
         source_type: 'return',
         source_id:   ret.id,

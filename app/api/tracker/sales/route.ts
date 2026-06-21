@@ -25,6 +25,8 @@ export async function POST(request: Request) {
 
   const body = await request.json();
   if (!body.product_id) return jsonError('Product is required.');
+  const qty = parseInt(String(body.qty ?? 1), 10);
+  if (isNaN(qty) || qty < 1) return jsonError('Quantity must be a positive whole number.', 400);
 
   const admin = createAdminClient();
 
@@ -38,7 +40,6 @@ export async function POST(request: Request) {
   if (prodErr || !product) return jsonError('Product not found.', 404);
 
   const isRestockStatus = RESTOCK_STATUSES.includes(body.status ?? 'Pending');
-  const qty             = body.qty ?? 1;
 
   // Stock check (only for active statuses)
   if (!isRestockStatus && product.stock_qty < qty) {

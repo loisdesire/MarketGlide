@@ -145,7 +145,7 @@ export default function CurrencyConverterPage() {
 
       <div className="fd-related">
         <div className="fd-container">
-          <div className="fd-related-title">Other free tools</div>
+          <div className="fd-related-title">Other business tools</div>
           <div className="fd-related-row">
             <Link href="/business-tools/shipping-calculator" className="fd-related-link"><ArrowRight size={14} />Shipping Calculator</Link>
             <Link href="/business-tools/invoice-generator"   className="fd-related-link"><ArrowRight size={14} />Invoice Generator</Link>
