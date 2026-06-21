@@ -81,7 +81,7 @@ export default function ReceiptGeneratorPage() {
               <hr style={{ border: 'none', borderTop: '1px dashed var(--fd-border)', margin: '10px 0' }} />
               {form.items.map((it, i) => (
                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, padding: '5px 0', borderBottom: '1px solid var(--fd-border)' }}>
-                  <span>{it.desc || '—'} ×{it.qty}</span>
+                  <span>{it.desc || '-'} ×{it.qty}</span>
                   <span>{fmt((parseFloat(it.qty) || 0) * (parseFloat(it.price) || 0))}</span>
                 </div>
               ))}

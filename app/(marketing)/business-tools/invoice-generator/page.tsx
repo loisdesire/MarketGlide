@@ -125,7 +125,7 @@ export default function InvoiceGeneratorPage() {
                 <tbody>
                   {form.items.map((it, i) => (
                     <tr key={i} style={{ borderBottom: '1px solid var(--fd-border)' }}>
-                      <td style={{ padding: '10px 0', fontSize: 14 }}>{it.desc || '—'}</td>
+                      <td style={{ padding: '10px 0', fontSize: 14 }}>{it.desc || '-'}</td>
                       <td style={{ padding: '10px 0', fontSize: 14, textAlign: 'right' }}>{it.qty}</td>
                       <td style={{ padding: '10px 0', fontSize: 14, textAlign: 'right' }}>{fmt(parseFloat(it.price) || 0)}</td>
                       <td style={{ padding: '10px 0', fontSize: 14, textAlign: 'right' }}>{fmt((parseFloat(it.qty) || 0) * (parseFloat(it.price) || 0))}</td>

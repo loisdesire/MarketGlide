@@ -117,7 +117,7 @@ export default function CurrencyConverterPage() {
                 </div>
                 <p className="fd-tool-result-note">
                   Rate: 1 {from} = {fmt((rates as Record<string,number>)[to] / ((rates as Record<string,number>)[from] || 1))} {to} ·{' '}
-                  {live ? 'Live rate' : 'Cached rate — may be up to 24h old'}
+                  {live ? 'Live rate' : 'Cached rate, may be up to 24h old'}
                 </p>
               </div>
             )}

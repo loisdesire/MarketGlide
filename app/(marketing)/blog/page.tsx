@@ -16,7 +16,7 @@ export default function BlogPage() {
             Insights for business builders
           </h1>
           <p style={{ fontSize: 16, color: 'var(--fd-muted)', margin: 0, maxWidth: 480, lineHeight: 1.7 }}>
-            Practical guides on importation, business management, and making the most of your free tools.
+            Practical guides on importation, business management, and making the most of our tools.
           </p>
         </div>
       </section>

@@ -17,7 +17,7 @@ function Hero() {
             <span className="accent">Automate. Profit.</span>
           </h1>
           <p className="fd-hero-sub">
-            From importation strategies to free business tools — get everything you need to
+            From importation strategies to practical business tools, get everything you need to
             start, manage, and scale your business in one place.
           </p>
           <div className="fd-hero-ctas">
@@ -25,7 +25,7 @@ function Hero() {
               Get the Book <ArrowRight size={16} />
             </Link>
             <Link href="/tracker/login" className="fd-btn fd-btn-outline-white">
-              Try the Tracker Free
+              Open the Tracker
             </Link>
           </div>
         </div>
@@ -48,7 +48,7 @@ function Hero() {
               </div>
               <div>
                 <div className="fd-hero-card-title">Sales &amp; Inventory Tracker</div>
-                <div className="fd-hero-card-sub">Multi-currency · Multi-user · Free</div>
+                <div className="fd-hero-card-sub">Multi-currency · Multi-user · Business</div>
               </div>
             </div>
 
@@ -79,7 +79,7 @@ function WhatWeOffer() {
     {
       Icon: BookOpen,
       title: 'The Book',
-      desc: 'The Mini Importation Mastery Guide walks you through everything — from finding suppliers to making your first sale. 22 chapters, zero fluff.',
+      desc: 'The Mini Importation Mastery Guide walks you through everything, from finding suppliers to making your first sale. 22 chapters, zero fluff.',
       cta: 'Get the Book',
       href: '/shop',
     },
@@ -93,7 +93,7 @@ function WhatWeOffer() {
     {
       Icon: Wrench,
       title: 'Business Tools',
-      desc: 'Free tools to run your business — Sales & Inventory Tracker, Invoice Generator, Shipping Calculator, Currency Converter, and more.',
+      desc: 'Practical tools built for business: Landed Cost Calculator, Invoice Generator, Receipt Generator, Currency Converter, and more.',
       cta: 'Explore Tools',
       href: '/business-tools',
     },
@@ -154,36 +154,6 @@ function FeaturedBanner() {
 
 /* ─── Product showcase ──────────────────────────────────────── */
 function ProductShowcase() {
-  const products = [
-    {
-      badge: 'Bestseller',
-      badgeCls: '',
-      title: 'Mini Importation Mastery Guide',
-      desc: '22 chapters covering every stage of the importation business — from sourcing to selling. Includes bonus worksheets and checklists.',
-      price: 'See pricing',
-      href: '/shop',
-      icon: <BookOpen size={36} color="var(--fd-orange)" />,
-    },
-    {
-      badge: 'New',
-      badgeCls: 'badge-new',
-      title: 'Importation Mastery Course',
-      desc: 'Video-based course with live support, real supplier contact lists, and lifetime access. The complete importation education.',
-      price: 'See pricing',
-      href: '/shop',
-      icon: <GraduationCap size={36} color="#3B82F6" />,
-    },
-    {
-      badge: 'Free',
-      badgeCls: 'badge-free',
-      title: 'Sales & Inventory Tracker',
-      desc: 'A full-featured business tracker — manage products, sales, purchases, customers, invoices, and reports. Multi-user. Multi-currency.',
-      price: <span className="free-tag">Free Forever</span>,
-      href: '/tracker/login',
-      icon: <LayoutDashboard size={36} color="#16a34a" />,
-    },
-  ];
-
   return (
     <section className="fd-section">
       <div className="fd-container">
@@ -195,22 +165,75 @@ function ProductShowcase() {
           </p>
         </div>
         <div className="fd-products-grid">
-          {products.map(({ badge, badgeCls, title, desc, price, href, icon }) => (
-            <div key={title} className="fd-product-card">
-              <div className="fd-product-img">
-                {icon}
-                <span className={`fd-product-badge ${badgeCls}`}>{badge}</span>
-              </div>
-              <div className="fd-product-body">
-                <h3 className="fd-product-title">{title}</h3>
-                <p className="fd-product-desc">{desc}</p>
-                <div className="fd-product-price">{price}</div>
-                <Link href={href} className="fd-btn fd-btn-primary fd-btn-sm">
-                  {href === '/tracker/login' ? 'Get Started Free' : 'View Details'} <ArrowRight size={14} />
-                </Link>
+
+          {/* Book */}
+          <div className="fd-product-card">
+            <div className="fd-product-cover fd-product-cover-book">
+              <div className="fd-product-cover-accent" />
+              <span className="fd-product-cover-badge">Bestseller</span>
+              <div className="fd-product-cover-label">Digital Guide</div>
+              <div className="fd-product-cover-title">Mini Importation Mastery Guide</div>
+              <span className="fd-product-cover-sub">22 chapters · Worksheets · Checklists</span>
+              <div className="fd-product-cover-icon">
+                <BookOpen size={26} color="var(--fd-orange)" />
               </div>
             </div>
-          ))}
+            <div className="fd-product-body">
+              <h3 className="fd-product-title">Mini Importation Mastery Guide</h3>
+              <p className="fd-product-desc">22 chapters covering every stage of the importation business, from sourcing to selling. Includes bonus worksheets and checklists.</p>
+              <div className="fd-product-price">See pricing</div>
+              <Link href="/shop" className="fd-btn fd-btn-primary fd-btn-sm">
+                View Details <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Course */}
+          <div className="fd-product-card">
+            <div className="fd-product-cover fd-product-cover-course">
+              <div className="fd-product-cover-accent" />
+              <span className="fd-product-cover-badge badge-new">New</span>
+              <div className="fd-product-cover-label">Video Course</div>
+              <div className="fd-product-cover-title">Importation Mastery Course</div>
+              <span className="fd-product-cover-sub">Video lessons · Live Q&amp;As · Community</span>
+              <div className="fd-product-cover-icon">
+                <GraduationCap size={26} color="#93c5fd" />
+              </div>
+            </div>
+            <div className="fd-product-body">
+              <h3 className="fd-product-title">Importation Mastery Course</h3>
+              <p className="fd-product-desc">Video-based course with live support, real supplier contact lists, and lifetime access. The complete importation education.</p>
+              <div className="fd-product-price">See pricing</div>
+              <Link href="/shop" className="fd-btn fd-btn-primary fd-btn-sm">
+                View Details <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Tracker */}
+          <div className="fd-product-card">
+            <div className="fd-product-cover fd-product-cover-tracker">
+              <div className="fd-product-cover-accent" />
+              <span className="fd-product-cover-badge badge-pro">Pro</span>
+              <div className="fd-cover-dash">
+                {['Sales', '₦420k', '89 units', 'Profit', '32%', 'Active'].map((v, i) => (
+                  <div key={i} className={`fd-cover-dash-cell${i === 1 || i === 4 ? ' green' : ''}`}>{v}</div>
+                ))}
+              </div>
+              <div className="fd-product-cover-label">Business Tracker</div>
+              <div className="fd-product-cover-title">Sales &amp; Inventory Tracker</div>
+              <span className="fd-product-cover-sub">Multi-user · Multi-currency</span>
+            </div>
+            <div className="fd-product-body">
+              <h3 className="fd-product-title">Sales &amp; Inventory Tracker</h3>
+              <p className="fd-product-desc">A full-featured business tracker: manage products, sales, purchases, customers, invoices, and reports. Multi-user. Multi-currency.</p>
+              <div className="fd-product-price">Sign up to access</div>
+              <Link href="/tracker/login" className="fd-btn fd-btn-primary fd-btn-sm">
+                Get Started <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -224,11 +247,11 @@ function TwoUpCTA() {
       <div className="fd-container">
         <div className="fd-twoup">
           <div className="fd-twoup-card">
-            <p className="fd-twoup-eyebrow">Free Tool</p>
-            <h3 className="fd-twoup-title">New to business? Start with the free Tracker</h3>
+            <p className="fd-twoup-eyebrow">Business Tracker</p>
+            <h3 className="fd-twoup-title">Get organised with the Tracker</h3>
             <p className="fd-twoup-sub">
-              Track your products, sales, purchases, and customers — all in one place.
-              No credit card. No setup fee. Just sign up and go.
+              Track your products, sales, purchases, and customers, all in one place.
+              Multi-user. Multi-currency. Built for growing businesses.
             </p>
             <Link href="/tracker/login" className="fd-btn fd-btn-primary fd-btn-sm">
               Open the Tracker <ArrowRight size={14} />

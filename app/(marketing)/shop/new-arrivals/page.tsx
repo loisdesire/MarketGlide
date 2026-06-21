@@ -12,7 +12,7 @@ export default function NewArrivalsPage() {
           <div className="fd-section-label">New Arrivals</div>
           <h1 className="fd-section-title" style={{ textAlign: 'left', marginBottom: 12 }}>What's new at Flom Digital</h1>
           <p style={{ fontSize: 15, color: 'var(--fd-muted)', margin: 0, lineHeight: 1.7 }}>
-            Fresh courses, guides, and tools — added regularly.
+            Fresh courses, guides, and tools, added regularly.
           </p>
         </div>
       </section>

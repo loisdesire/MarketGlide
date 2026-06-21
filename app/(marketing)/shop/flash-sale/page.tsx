@@ -17,7 +17,7 @@ export default function FlashSalePage() {
             Limited-time offers
           </h1>
           <p style={{ fontSize: 15, color: 'rgba(255,255,255,.7)', maxWidth: 440, lineHeight: 1.7, margin: 0 }}>
-            Grab our best products at discounted prices — for a limited time only.
+            Grab our best products at discounted prices, for a limited time only.
           </p>
         </div>
       </section>

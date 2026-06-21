@@ -8,7 +8,7 @@ import TrustBadgeRow from '@/components/marketing/TrustBadgeRow';
 
 export const metadata: Metadata = {
   title: 'Business Tools',
-  description: 'Free productivity tools for business builders — Shipping Calculator, Invoice Generator, Receipt Generator, Currency Converter, and more.',
+  description: 'Business tools for serious builders: Landed Cost Calculator, Invoice Generator, Receipt Generator, Currency Converter, and more.',
 };
 
 const TOOLS = [
@@ -17,40 +17,40 @@ const TOOLS = [
     title: 'Sales & Inventory Tracker',
     desc: 'Full-featured tracker for products, sales, purchases, customers, and reports. Multi-user and multi-currency.',
     href: '/tracker/login',
-    badge: 'Free',
-    badgeCls: 'badge-free',
+    badge: 'Pro',
+    badgeCls: '',
   },
   {
     Icon: Truck,
-    title: 'Shipping Calculator',
-    desc: 'Estimate volumetric weight and shipping costs for air and sea freight. Great for importers and resellers.',
+    title: 'Landed Cost Calculator',
+    desc: 'Full landed cost tool: chargeable weight, freight, customs and duty, total landed cost, profit margin. 36 currencies.',
     href: '/business-tools/shipping-calculator',
-    badge: 'Free',
-    badgeCls: 'badge-free',
+    badge: '',
+    badgeCls: '',
   },
   {
     Icon: FileText,
     title: 'Invoice Generator',
     desc: 'Create professional invoices with your branding, line items, taxes, and discounts. Print or save as PDF.',
     href: '/business-tools/invoice-generator',
-    badge: 'Free',
-    badgeCls: 'badge-free',
+    badge: '',
+    badgeCls: '',
   },
   {
     Icon: Receipt,
     title: 'Receipt Generator',
     desc: 'Generate clean point-of-sale receipts in seconds. Perfect for market traders and retail businesses.',
     href: '/business-tools/receipt-generator',
-    badge: 'Free',
-    badgeCls: 'badge-free',
+    badge: '',
+    badgeCls: '',
   },
   {
     Icon: DollarSign,
     title: 'Currency Converter',
     desc: 'Live exchange rates for USD, GBP, EUR, NGN, CNY, and more. Built for importers dealing in multiple currencies.',
     href: '/business-tools/currency-converter',
-    badge: 'Free',
-    badgeCls: 'badge-free',
+    badge: '',
+    badgeCls: '',
   },
 ];
 
@@ -62,11 +62,10 @@ export default function BusinessToolsPage() {
         <div className="fd-container">
           <div className="fd-section-label">Business Tools</div>
           <h1 className="fd-section-title" style={{ textAlign: 'left', marginBottom: 12 }}>
-            Free tools to run your business
+            Tools to run your business
           </h1>
           <p style={{ fontSize: 16, color: 'var(--fd-muted)', maxWidth: 560, lineHeight: 1.7, margin: 0 }}>
-            Everything a growing business needs — built free by Flom Digital.
-            No subscriptions, no limits, no excuses.
+            Everything a growing business needs, built by Flom Digital.
           </p>
         </div>
       </section>
@@ -83,9 +82,11 @@ export default function BusinessToolsPage() {
                   </div>
                   <h2 className="fd-tool-title" style={{ fontSize: 15 }}>
                     {title}
-                    <span className={`fd-product-badge ${badgeCls}`} style={{ position: 'static', marginLeft: 4 }}>
-                      {badge}
-                    </span>
+                    {badge && (
+                      <span className={`fd-product-badge ${badgeCls}`} style={{ position: 'static', marginLeft: 4 }}>
+                        {badge}
+                      </span>
+                    )}
                   </h2>
                 </div>
                 <p className="fd-tool-desc">{desc}</p>

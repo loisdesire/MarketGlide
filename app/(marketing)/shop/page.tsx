@@ -4,7 +4,7 @@ import { ArrowRight, BookOpen, GraduationCap, Zap } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Shop',
-  description: 'Books, courses, and resources from Flom Digital — built for serious business builders.',
+  description: 'Books, courses, and resources from Flom Digital, built for serious business builders.',
 };
 
 const PRODUCTS = [
@@ -12,7 +12,7 @@ const PRODUCTS = [
     Icon: BookOpen,
     badge: 'Digital Download',
     title: 'Mini Importation Mastery Guide',
-    desc: '22 chapters walking you through every stage of the importation business — from sourcing to your first sale.',
+    desc: '22 chapters walking you through every stage of the importation business, from sourcing to your first sale.',
     href: '#',
     iconColor: 'var(--fd-orange)',
   },

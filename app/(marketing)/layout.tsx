@@ -6,7 +6,7 @@ import Footer from '@/components/marketing/Footer';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Flom Digital — Learn. Build. Automate. Profit.',
+    default: 'Flom Digital: Learn. Build. Automate. Profit.',
     template: '%s | Flom Digital',
   },
   description:

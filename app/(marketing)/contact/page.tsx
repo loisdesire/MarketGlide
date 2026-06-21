@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 const FAQS: FAQItem[] = [
   {
     question: 'How do I access the Sales & Inventory Tracker?',
-    answer: 'The Tracker is completely free. Go to Business Tools, click "Sales & Inventory Tracker," and register your business account. You can add your team from Business Settings.',
+    answer: 'Go to Business Tools, click "Sales & Inventory Tracker," and register your business account. Once you\'re in, you can add your team from Business Settings.',
   },
   {
     question: 'What do I get with the Mini Importation Mastery Guide?',
-    answer: 'The Guide covers the full importation journey — from identifying profitable products and finding reliable suppliers to customs clearance, pricing, and making your first sale. 22 chapters, worksheets, and bonus checklists included.',
+    answer: 'The Guide covers the full importation journey, from identifying profitable products and finding reliable suppliers to customs clearance, pricing, and making your first sale. 22 chapters, worksheets, and bonus checklists included.',
   },
   {
     question: 'Is there a difference between the Book and the Course?',
