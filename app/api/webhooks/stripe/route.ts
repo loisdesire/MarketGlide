@@ -1,12 +1,10 @@
 import Stripe from 'stripe';
 import { createAdminClient } from '@/lib/supabase/admin';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
-// Raw body needed for signature verification — do not parse with Next.js body parser
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const body = await request.text();
   const sig  = request.headers.get('stripe-signature');
 
