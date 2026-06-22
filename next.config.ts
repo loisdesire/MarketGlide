@@ -29,8 +29,6 @@ const nextConfig: NextConfig = {
 
     return [
       ...trackerPageRedirects,
-      { source: '/login',    destination: '/tracker/login',    permanent: true },
-      { source: '/register', destination: '/tracker/register', permanent: true },
     ];
   },
 };
