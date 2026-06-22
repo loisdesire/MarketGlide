@@ -31,12 +31,20 @@ export async function proxy(request: NextRequest) {
   const isApiRoute         = pathname.startsWith('/api');
   const isTrackerAuthRoute = pathname.startsWith('/tracker/login') || pathname.startsWith('/tracker/register');
   const isTrackerAppRoute  = pathname.startsWith('/tracker') && !isTrackerAuthRoute;
+  const isAdminRoute       = pathname.startsWith('/admin');
 
   // API routes and all marketing/public routes are always allowed
-  if (isApiRoute || (!isTrackerAuthRoute && !isTrackerAppRoute)) return supabaseResponse;
+  if (isApiRoute || (!isTrackerAuthRoute && !isTrackerAppRoute && !isAdminRoute)) return supabaseResponse;
 
   // Unauthenticated user trying to access the tracker app
   if (!user && isTrackerAppRoute) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/tracker/login';
+    return NextResponse.redirect(url);
+  }
+
+  // Unauthenticated user trying to access the admin
+  if (!user && isAdminRoute) {
     const url = request.nextUrl.clone();
     url.pathname = '/tracker/login';
     return NextResponse.redirect(url);

@@ -16,10 +16,11 @@ CREATE TABLE IF NOT EXISTS businesses (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Migrate any existing business_settings row into businesses
+-- Migrate any existing business_settings row into businesses (skip if already seeded)
 INSERT INTO businesses (name, email, address)
 SELECT name, COALESCE(email, ''), COALESCE(address, '')
 FROM business_settings WHERE id = 1
+AND NOT EXISTS (SELECT 1 FROM businesses)
 LIMIT 1;
 
 -- If nothing existed, create a placeholder business
@@ -63,9 +64,11 @@ $$;
 -- ── 6. RLS on businesses ──────────────────────────────────────
 ALTER TABLE businesses ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "businesses_select" ON businesses;
 CREATE POLICY "businesses_select" ON businesses FOR SELECT
   USING (id = auth_business_id());
 
+DROP POLICY IF EXISTS "businesses_update" ON businesses;
 CREATE POLICY "businesses_update" ON businesses FOR UPDATE
   USING (id = auth_business_id() AND auth_role() = 'Administrator');
 

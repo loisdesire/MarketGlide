@@ -3,35 +3,27 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronDown, Search, User, ShoppingBag, X } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 
 type Child = { label: string; href: string; badge?: string };
 type Item  = { label: string; href?: string; children?: Child[] };
 
 const NAV: Item[] = [
-  { label: 'Home', href: '/' },
+  { label: 'Home',     href: '/' },
+  { label: 'Academy',  href: '/academy' },
   {
     label: 'Business Tools',
     children: [
-      { label: 'Sales & Inventory Tracker', href: '/tracker/login', badge: 'Live' },
-      { label: 'Shipping Calculator',       href: '/business-tools/shipping-calculator' },
-      { label: 'Invoice Generator',         href: '/business-tools/invoice-generator' },
-      { label: 'Receipt Generator',         href: '/business-tools/receipt-generator' },
-      { label: 'Currency Converter',        href: '/business-tools/currency-converter' },
+      { label: 'Sales & Inventory Tracker',  href: '/tracker/login',                          badge: 'Live' },
+      { label: 'Landed Cost Calculator',     href: '/business-tools/shipping-calculator' },
+      { label: 'Invoice Generator',          href: '/business-tools/invoice-generator' },
+      { label: 'Receipt Generator',          href: '/business-tools/receipt-generator' },
+      { label: 'Currency Converter',         href: '/business-tools/currency-converter' },
     ],
   },
-  {
-    label: 'Shop',
-    children: [
-      { label: 'All Products',  href: '/shop' },
-      { label: 'Flash Sale',    href: '/shop/flash-sale',    badge: 'Hot' },
-      { label: 'New Arrivals',  href: '/shop/new-arrivals' },
-      { label: 'My Account',   href: '/shop/account' },
-      { label: 'Cart',         href: '/shop/cart' },
-    ],
-  },
-  { label: 'Blog',    href: '/blog' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Shop',     href: '/shop' },
+  { label: 'Services', href: '/services' },
+  { label: 'Blog',     href: '/blog' },
 ];
 
 export default function Header() {
@@ -84,16 +76,7 @@ export default function Header() {
 
         {/* Right actions */}
         <div className="fd-header-actions">
-          <button className="fd-icon-btn" aria-label="Search">
-            <Search size={18} />
-          </button>
-          <Link href="/shop/account" className="fd-icon-btn" aria-label="Account">
-            <User size={18} />
-          </Link>
-          <Link href="/shop/cart" className="fd-icon-btn" aria-label="Cart">
-            <ShoppingBag size={18} />
-          </Link>
-          <Link href="/tracker/login" className="fd-header-cta">Sign In</Link>
+          <Link href="/tracker/login" className="fd-header-cta">Login</Link>
           <button
             className="fd-hamburger"
             onClick={() => setDrawerOpen(true)}
@@ -172,15 +155,15 @@ export default function Header() {
             style={{ width: '100%', justifyContent: 'center' }}
             onClick={closeDrawer}
           >
-            Sign In to Tracker
+            Login
           </Link>
           <Link
-            href="/shop"
+            href="/academy"
             className="fd-btn fd-btn-outline"
             style={{ width: '100%', justifyContent: 'center' }}
             onClick={closeDrawer}
           >
-            Shop Now
+            Explore Academy
           </Link>
         </div>
       </div>

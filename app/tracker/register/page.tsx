@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -14,7 +14,7 @@ export default function RegisterPage() {
     email: '',
     password: '',
   });
-  const [error, setError]   = useState('');
+  const [error, setError]     = useState('');
   const [loading, setLoading] = useState(false);
 
   function set(field: keyof typeof form) {
@@ -32,34 +32,34 @@ export default function RegisterPage() {
 
     setLoading(true);
 
-    const supabase = createClient();
-
-    // Step 1: create auth account
-    const { error: signUpErr } = await supabase.auth.signUp({
-      email:    form.email.trim(),
-      password: form.password,
-      options:  { data: { full_name: form.full_name.trim() } },
-    });
-
-    if (signUpErr) {
-      setError(signUpErr.message);
-      setLoading(false);
-      return;
-    }
-
-    // Step 2: create business + link user as Administrator
+    // Create account + business in one server-side call (no confirmation email sent)
     const res = await fetch('/api/tracker/register', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
+        email:         form.email.trim(),
+        password:      form.password,
         business_name: form.business_name.trim(),
         full_name:     form.full_name.trim(),
       }),
     });
 
+    const data = await res.json();
     if (!res.ok) {
-      const data = await res.json();
       setError(data.error ?? 'Registration failed. Please try again.');
+      setLoading(false);
+      return;
+    }
+
+    // Sign in to establish the client session
+    const supabase = createClient();
+    const { error: signInErr } = await supabase.auth.signInWithPassword({
+      email:    form.email.trim(),
+      password: form.password,
+    });
+
+    if (signInErr) {
+      setError('Account created but sign-in failed. Please go to the login page.');
       setLoading(false);
       return;
     }

@@ -3,41 +3,42 @@ import ScrollToTop from './ScrollToTop';
 
 const COLS = [
   {
-    title: 'Company',
+    title: 'Learn',
     links: [
-      { label: 'About Us',   href: '/about' },
-      { label: 'Blog',       href: '/blog' },
-      { label: 'Contact',    href: '/contact' },
-      { label: 'Careers',    href: '/careers' },
+      { label: 'Academy',          href: '/academy' },
+      { label: 'Blog',             href: '/blog' },
+      { label: 'Free Resources',   href: '/resources' },
+      { label: 'Success Stories',  href: '/success-stories' },
+      { label: 'Affiliate Picks',  href: '/affiliate' },
     ],
   },
   {
     title: 'Business Tools',
     links: [
-      { label: 'Sales & Inventory Tracker', href: '/tracker/login' },
-      { label: 'Shipping Calculator',       href: '/business-tools/shipping-calculator' },
-      { label: 'Invoice Generator',         href: '/business-tools/invoice-generator' },
-      { label: 'Receipt Generator',         href: '/business-tools/receipt-generator' },
-      { label: 'Currency Converter',        href: '/business-tools/currency-converter' },
+      { label: 'Sales & Inventory Tracker',  href: '/tracker/login' },
+      { label: 'Landed Cost Calculator',     href: '/business-tools/shipping-calculator' },
+      { label: 'Invoice Generator',          href: '/business-tools/invoice-generator' },
+      { label: 'Receipt Generator',          href: '/business-tools/receipt-generator' },
+      { label: 'Currency Converter',         href: '/business-tools/currency-converter' },
     ],
   },
   {
-    title: 'Shop',
+    title: 'Company',
     links: [
-      { label: 'All Products',  href: '/shop' },
-      { label: 'Flash Sale',    href: '/shop/flash-sale' },
-      { label: 'New Arrivals',  href: '/shop/new-arrivals' },
-      { label: 'My Account',   href: '/shop/account' },
-      { label: 'Cart',          href: '/shop/cart' },
+      { label: 'About Us',   href: '/about' },
+      { label: 'Services',   href: '/services' },
+      { label: 'Shop',       href: '/shop' },
+      { label: 'FAQ',        href: '/faq' },
+      { label: 'Contact',    href: '/contact' },
     ],
   },
   {
     title: 'Legal',
     links: [
-      { label: 'Privacy Policy',    href: '/privacy' },
-      { label: 'Terms of Service',  href: '/terms' },
-      { label: 'Refund Policy',     href: '/refunds' },
-      { label: 'Cookie Policy',     href: '/cookies' },
+      { label: 'Privacy Policy',   href: '/privacy' },
+      { label: 'Terms of Service', href: '/terms' },
+      { label: 'Refund Policy',    href: '/refunds' },
+      { label: 'Cookie Policy',    href: '/cookies' },
     ],
   },
 ];
