@@ -41,18 +41,25 @@ export default async function ShopPage() {
 
   return (
     <>
-      {/* ── Hero: warm amber gradient, centered, commercial ── */}
+      {/* ── Hero: deep indigo, centered, premium marketplace feel ── */}
       <section style={{
-        background: 'linear-gradient(135deg,#431407 0%,#7c2d12 45%,#1a0800 100%)',
+        background: '#0b0915',
         color: '#fff', padding: '88px 0 72px', textAlign: 'center',
         position: 'relative', overflow: 'hidden',
       }}>
-        {/* Radial warm glow */}
+        {/* Purple radial glow */}
         <div style={{
           position: 'absolute', top: '40%', left: '50%',
           transform: 'translate(-50%,-50%)',
-          width: 700, height: 700, borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(249,115,22,.18) 0%,transparent 65%)',
+          width: 800, height: 800, borderRadius: '50%',
+          background: 'radial-gradient(circle,rgba(139,92,246,.22) 0%,transparent 62%)',
+          pointerEvents: 'none',
+        }} />
+        {/* Subtle dot texture */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px)',
+          backgroundSize: '36px 36px',
           pointerEvents: 'none',
         }} />
 

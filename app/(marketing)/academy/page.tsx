@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, BookOpen, Video, FileText, Layers } from 'lucide-react';
+import { ArrowRight, CheckCircle, Layers } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export const metadata: Metadata = {
@@ -8,11 +8,13 @@ export const metadata: Metadata = {
   description: 'Practical importation education and business courses from Flom Digital.',
 };
 
-const PROMISES = [
-  { Icon: BookOpen, text: 'Practical, not theoretical' },
-  { Icon: CheckCircle, text: 'Africa-focused strategies' },
-  { Icon: Layers, text: 'Step-by-step frameworks' },
-  { Icon: CheckCircle, text: 'Lifetime access' },
+const CURRICULUM = [
+  'Identifying winning products to import',
+  'Finding & vetting verified suppliers',
+  'Shipping terms, freight & logistics',
+  'Customs, duties & landing costs',
+  'Pricing strategies for maximum profit',
+  'Your first sale — start to finish',
 ];
 
 const TYPE_COLORS: Record<string, string> = {
@@ -48,51 +50,97 @@ export default async function AcademyPage() {
 
   return (
     <>
-      {/* ── Hero: editorial, full-width with bottom feature strip ── */}
-      <section style={{ background: 'var(--fd-navy)', color: '#fff', position: 'relative', overflow: 'hidden' }}>
-        {/* Diagonal accent block */}
-        <div style={{
-          position: 'absolute', top: 0, right: 0, bottom: 0, width: '38%',
-          background: 'rgba(249,115,22,.05)',
-          clipPath: 'polygon(18% 0, 100% 0, 100% 100%, 0% 100%)',
-          pointerEvents: 'none',
-        }} />
-        {/* Subtle grid lines */}
+      {/* ── Hero ── */}
+      <section style={{ background: 'var(--fd-navy)', color: '#fff', padding: '80px 0 72px', position: 'relative', overflow: 'hidden' }}>
+        {/* Subtle horizontal rule texture */}
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: 'linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px)',
-          backgroundSize: '100% 64px',
+          backgroundImage: 'linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px)',
+          backgroundSize: '100% 56px',
           pointerEvents: 'none',
         }} />
 
-        <div className="fd-container" style={{ position: 'relative', padding: '80px 24px 64px' }}>
-          <span className="fd-hero-eyebrow">Flom Academy</span>
-          <h1 style={{ fontSize: 'clamp(32px,5vw,58px)', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-.03em', margin: '16px 0 22px', maxWidth: 660 }}>
-            Learn the business<br />of importation.
-          </h1>
-          <p style={{ fontSize: 17, color: 'rgba(255,255,255,.68)', maxWidth: 520, lineHeight: 1.75, margin: '0 0 40px' }}>
-            Courses and guides built for Nigerian and African entrepreneurs — real,
-            actionable knowledge you can apply from day one.
-          </p>
-          <div className="fd-hero-ctas">
-            <a href="#products" className="fd-btn fd-btn-primary">Browse products <ArrowRight size={16} /></a>
-            <Link href="/resources" className="fd-btn fd-btn-outline-white">Free resources</Link>
+        <div className="fd-hero-inner" style={{ position: 'relative' }}>
+          {/* Left — headline + CTAs */}
+          <div>
+            <span className="fd-hero-eyebrow">Flom Academy</span>
+            <h1 className="fd-hero-headline">
+              Learn the business<br />
+              <span className="accent">of importation.</span>
+            </h1>
+            <p className="fd-hero-sub">
+              Practical courses and guides built for Nigerian and African
+              entrepreneurs. Real knowledge you can apply from day one.
+            </p>
+            <div className="fd-hero-ctas">
+              <a href="#products" className="fd-btn fd-btn-primary">Browse products <ArrowRight size={16} /></a>
+              <Link href="/resources" className="fd-btn fd-btn-outline-white">Free resources</Link>
+            </div>
           </div>
-        </div>
 
-        {/* Feature strip pinned to hero bottom */}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', background: 'rgba(0,0,0,.25)' }}>
-          <div className="fd-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)' }}>
-            {PROMISES.map(({ Icon, text }, i) => (
-              <div key={text} style={{
-                display: 'flex', gap: 10, alignItems: 'center',
-                padding: '18px 24px',
-                borderRight: i < 3 ? '1px solid rgba(255,255,255,.07)' : 'none',
-              }}>
-                <Icon size={15} color="var(--fd-orange)" style={{ flexShrink: 0 }} />
-                <span style={{ fontSize: 13, color: 'rgba(255,255,255,.65)', lineHeight: 1.4 }}>{text}</span>
+          {/* Right — course outline card (white on dark, no gradient) */}
+          <div style={{
+            background: '#fff', borderRadius: 16, overflow: 'hidden',
+            boxShadow: '0 24px 64px rgba(0,0,0,.35)',
+          }}>
+            {/* Card header */}
+            <div style={{
+              background: 'var(--fd-navy)', borderBottom: '3px solid var(--fd-orange)',
+              padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--fd-orange)' }}>
+                Course outline
+              </span>
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontWeight: 500 }}>
+                22+ chapters
+              </span>
+            </div>
+
+            {/* Chapter list */}
+            <div style={{ padding: '8px 0' }}>
+              {CURRICULUM.map((topic, i) => (
+                <div key={topic} style={{
+                  display: 'flex', gap: 14, alignItems: 'center',
+                  padding: '11px 24px',
+                  borderBottom: i < CURRICULUM.length - 1 ? '1px solid #f1f5f9' : 'none',
+                }}>
+                  <span style={{
+                    width: 26, height: 26, borderRadius: 7,
+                    background: i < 2 ? 'var(--fd-orange)' : '#fff7ed',
+                    color: i < 2 ? '#fff' : 'var(--fd-orange)',
+                    fontSize: 11, fontWeight: 800,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span style={{ fontSize: 13.5, color: 'var(--fd-text)', lineHeight: 1.4, fontWeight: i < 2 ? 600 : 400 }}>
+                    {topic}
+                  </span>
+                  {i < 2 && (
+                    <CheckCircle size={14} color="var(--fd-orange)" style={{ marginLeft: 'auto', flexShrink: 0 }} />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Card footer */}
+            <div style={{
+              background: '#f8fafc', borderTop: '1px solid #e2e8f0',
+              padding: '14px 24px', display: 'flex', alignItems: 'center', gap: 24,
+            }}>
+              <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                <Layers size={13} color="var(--fd-muted)" />
+                <span style={{ fontSize: 12, color: 'var(--fd-muted)' }}>+ 16 more chapters</span>
               </div>
-            ))}
+              <div style={{ marginLeft: 'auto', display: 'flex', gap: 20 }}>
+                {[['22+', 'Chapters'], ['∞', 'Access']].map(([v, l]) => (
+                  <div key={l} style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 17, fontWeight: 800, color: 'var(--fd-navy)', lineHeight: 1 }}>{v}</div>
+                    <div style={{ fontSize: 10, color: 'var(--fd-muted)', marginTop: 3, textTransform: 'uppercase', letterSpacing: '.05em' }}>{l}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
