@@ -122,7 +122,7 @@ export default async function ProductSqueezePage({ params }: Props) {
                 This {meta.badge.toLowerCase()} includes
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
-                {meta.includes.map(item => (
+                {meta.includes.map((item: string) => (
                   <div key={item} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                     <div style={{ width: 34, height: 34, borderRadius: 8, background: 'rgba(255,107,0,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <Icon size={16} color="var(--fd-orange)" />
@@ -145,7 +145,7 @@ export default async function ProductSqueezePage({ params }: Props) {
               What you will {product.type === 'course' ? 'learn' : 'get'}
             </h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
-              {benefits.map((b, i) => (
+              {benefits.map((b: string, i: number) => (
                 <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                   <CheckCircle size={16} color="var(--fd-orange)" style={{ flexShrink: 0, marginTop: 3 }} />
                   <span style={{ fontSize: 14, color: 'var(--fd-muted)', lineHeight: 1.65 }}>{b}</span>
