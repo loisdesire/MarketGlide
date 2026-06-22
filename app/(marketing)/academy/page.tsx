@@ -70,59 +70,39 @@ export default async function AcademyPage() {
             </div>
           </div>
 
-          {/* Right — 2×2 bento */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          {/* Right — bento: lifetime spans rows 1+2 (left), 22+ + africa stack (right), practical full-width */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto auto', gap: 8 }}>
 
-            {/* Row 1 Left — dark glass: lifetime, hugs content */}
+            {/* Col 1, rows 1+2 — dark glass, lifetime, hugs content */}
             <div style={{
-              alignSelf: 'start',
+              gridRow: '1 / 3', alignSelf: 'start',
               background: 'rgba(255,255,255,.06)',
               border: '1px solid rgba(255,255,255,.1)',
-              borderRadius: 14, padding: '22px',
-              display: 'flex', flexDirection: 'column',
+              borderRadius: 14, padding: '24px 22px',
+              display: 'flex', flexDirection: 'column', gap: 12,
             }}>
-              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--fd-orange)', marginBottom: 14 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--fd-orange)' }}>
                 Lifetime access
               </span>
-              <div style={{ fontSize: 58, fontWeight: 900, color: '#fff', lineHeight: 1, marginBottom: 14 }}>∞</div>
-              <p style={{ fontSize: 12.5, color: 'rgba(255,255,255,.5)', lineHeight: 1.55, margin: 0 }}>
+              <div style={{ fontSize: 64, fontWeight: 900, color: '#fff', lineHeight: 1 }}>∞</div>
+              <p style={{ fontSize: 12.5, color: 'rgba(255,255,255,.5)', lineHeight: 1.6, margin: 0 }}>
                 Buy once. Your content is there whenever you need it — no expiry.
               </p>
             </div>
 
-            {/* Row 1 Right — orange glass: 22+ stat */}
+            {/* Col 2, row 1 — orange glass: 22+ */}
             <div style={{
               background: 'rgba(249,115,22,.12)',
               border: '1px solid rgba(249,115,22,.25)',
-              borderRadius: 14, padding: '22px',
+              borderRadius: 14, padding: '20px',
             }}>
-              <div style={{ fontSize: 46, fontWeight: 900, color: 'var(--fd-orange)', lineHeight: 1 }}>22+</div>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,.55)', marginTop: 10, lineHeight: 1.5 }}>
-                In-depth chapters,<br />zero filler
+              <div style={{ fontSize: 42, fontWeight: 900, color: 'var(--fd-orange)', lineHeight: 1 }}>22+</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,.55)', marginTop: 8, lineHeight: 1.4 }}>
+                In-depth chapters, zero filler
               </div>
             </div>
 
-            {/* Row 2 Left — orange glass: practical */}
-            <div style={{
-              background: 'rgba(249,115,22,.12)',
-              border: '1px solid rgba(249,115,22,.25)',
-              borderRadius: 14, padding: '18px 20px',
-              display: 'flex', alignItems: 'center', gap: 12,
-            }}>
-              <div style={{
-                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                background: 'rgba(249,115,22,.2)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <Zap size={17} color="var(--fd-orange)" fill="var(--fd-orange)" />
-              </div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 2 }}>Practical knowledge</div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,.5)' }}>No theory. Just results.</div>
-              </div>
-            </div>
-
-            {/* Row 2 Right — dark glass: Africa-first */}
+            {/* Col 2, row 2 — dark glass: Africa-first */}
             <div style={{
               background: 'rgba(255,255,255,.06)',
               border: '1px solid rgba(255,255,255,.1)',
@@ -139,6 +119,29 @@ export default async function AcademyPage() {
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 2 }}>Africa-first</div>
                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,.45)' }}>Nigeria · Ghana · Kenya</div>
+              </div>
+            </div>
+
+            {/* Row 3, full width — orange glass: practical */}
+            <div style={{
+              gridColumn: '1 / 3',
+              background: 'rgba(249,115,22,.12)',
+              border: '1px solid rgba(249,115,22,.25)',
+              borderRadius: 14, padding: '16px 22px',
+              display: 'flex', alignItems: 'center', gap: 14,
+            }}>
+              <div style={{
+                width: 34, height: 34, borderRadius: 9, flexShrink: 0,
+                background: 'rgba(249,115,22,.2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Zap size={17} color="var(--fd-orange)" fill="var(--fd-orange)" />
+              </div>
+              <div>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: '#fff' }}>Practical, not theoretical</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,.65)', marginTop: 2 }}>
+                  Built by someone who actually runs an importation business
+                </div>
               </div>
             </div>
 
