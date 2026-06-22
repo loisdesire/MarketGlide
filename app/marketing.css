@@ -31,6 +31,18 @@
 .fd-section    { padding: 88px 0; }
 .fd-section-sm { padding: 56px 0; }
 
+/* ── Avatar dropdown item ───────────────────────────────────── */
+.fd-avatar-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 12px; border-radius: 6px; font-size: 13.5px;
+  font-weight: 500; color: var(--fd-text); text-decoration: none;
+  transition: background var(--fd-trans), color var(--fd-trans);
+  font-family: inherit;
+}
+.fd-avatar-item:hover { background: var(--fd-bg-alt); color: var(--fd-navy); }
+button.fd-avatar-item { color: #dc2626; }
+button.fd-avatar-item:hover { background: #fef2f2; }
+
 /* ── Announcement bar ───────────────────────────────────────── */
 .fd-announce {
   background: var(--fd-navy);
@@ -631,8 +643,10 @@
   .fd-footer-top        { grid-template-columns: 1fr 1fr 1fr; gap: 32px; }
 }
 @media (max-width: 900px) {
-  .fd-hero-inner        { grid-template-columns: 1fr; }
-  .fd-hero-visual       { display: none; }
+  .fd-hero-inner           { grid-template-columns: 1fr; }
+  .fd-hero-visual          { display: none; }
+  .fd-tools-hero-grid      { grid-template-columns: 1fr !important; }
+  .fd-tools-hero-grid > *:last-child { display: none; }
   .fd-nav               { display: none; }
   .fd-hamburger         { display: flex; }
   .fd-header-cta        { display: none; }

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, ShoppingBag, Package, Zap } from 'lucide-react';
+import { ArrowRight, Zap } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export const metadata: Metadata = {
@@ -41,58 +41,46 @@ export default async function ShopPage() {
 
   return (
     <>
-      {/* ── Hero ── */}
-      <section className="fd-hero">
-        <div className="fd-hero-inner">
-          <div>
-            <span className="fd-hero-eyebrow">Flom Shop</span>
-            <h1 className="fd-hero-headline">
-              Invest in your<br />
-              <span className="accent">business education.</span>
-            </h1>
-            <p className="fd-hero-sub">
-              Every product here is designed to give you a real, practical advantage as a
-              business builder. No fluff — just what works.
-            </p>
-            <div className="fd-hero-ctas">
-              <a href="#products" className="fd-btn fd-btn-primary">Shop Now <ArrowRight size={16} /></a>
-              <Link href="/academy" className="fd-btn fd-btn-outline-white">View Academy</Link>
-            </div>
+      {/* ── Hero: warm amber gradient, centered, commercial ── */}
+      <section style={{
+        background: 'linear-gradient(135deg,#431407 0%,#7c2d12 45%,#1a0800 100%)',
+        color: '#fff', padding: '88px 0 72px', textAlign: 'center',
+        position: 'relative', overflow: 'hidden',
+      }}>
+        {/* Radial warm glow */}
+        <div style={{
+          position: 'absolute', top: '40%', left: '50%',
+          transform: 'translate(-50%,-50%)',
+          width: 700, height: 700, borderRadius: '50%',
+          background: 'radial-gradient(circle,rgba(249,115,22,.18) 0%,transparent 65%)',
+          pointerEvents: 'none',
+        }} />
+
+        <div className="fd-container" style={{ position: 'relative' }}>
+          <span className="fd-hero-eyebrow">Flom Shop</span>
+          <h1 style={{ fontSize: 'clamp(32px,5vw,58px)', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-.03em', margin: '16px auto 22px', maxWidth: 600 }}>
+            Invest in your<br /><span style={{ color: 'var(--fd-orange)' }}>business education.</span>
+          </h1>
+          <p style={{ fontSize: 17, color: 'rgba(255,255,255,.68)', maxWidth: 480, lineHeight: 1.75, margin: '0 auto 40px' }}>
+            Every product is designed to give you a real, practical advantage. No fluff — just what works.
+          </p>
+          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a href="#products" className="fd-btn fd-btn-primary">Shop now <ArrowRight size={16} /></a>
+            <Link href="/academy" className="fd-btn fd-btn-outline-white">View Academy</Link>
           </div>
 
-          <div className="fd-hero-visual">
-            <div className="fd-hero-visual-inner">
-              <div className="fd-hero-card">
-                <div className="fd-hero-card-icon"><ShoppingBag size={20} color="#fff" /></div>
-                <div>
-                  <div className="fd-hero-card-title">Instant digital delivery</div>
-                  <div className="fd-hero-card-sub">Download immediately after purchase</div>
-                </div>
+          {/* Inline stats */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 56, marginTop: 56 }}>
+            {[
+              { val: <Zap size={20} fill="#f97316" color="#f97316" />, lbl: 'Instant delivery' },
+              { val: '∞',   lbl: 'Lifetime access' },
+              { val: '$20', lbl: 'From just' },
+            ].map(({ val, lbl }) => (
+              <div key={lbl} style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 26, fontWeight: 800, color: '#fff', lineHeight: 1.1, display: 'flex', alignItems: 'center', justifyContent: 'center', height: 32 }}>{val}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,.45)', marginTop: 6, textTransform: 'uppercase', letterSpacing: '.07em', fontWeight: 600 }}>{lbl}</div>
               </div>
-              <div className="fd-hero-card">
-                <div className="fd-hero-card-icon" style={{ background: '#7c3aed' }}>
-                  <Package size={20} color="#fff" />
-                </div>
-                <div>
-                  <div className="fd-hero-card-title">Lifetime access</div>
-                  <div className="fd-hero-card-sub">Buy once, access forever</div>
-                </div>
-              </div>
-              <div className="fd-hero-stat-row">
-                <div className="fd-hero-stat">
-                  <div className="fd-hero-stat-val"><Zap size={16} color="#f97316" fill="#f97316" /></div>
-                  <div className="fd-hero-stat-lbl">Instant</div>
-                </div>
-                <div className="fd-hero-stat">
-                  <div className="fd-hero-stat-val">∞</div>
-                  <div className="fd-hero-stat-lbl">Access</div>
-                </div>
-                <div className="fd-hero-stat">
-                  <div className="fd-hero-stat-val">{items.length || '—'}</div>
-                  <div className="fd-hero-stat-lbl">Products</div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -115,9 +103,7 @@ export default async function ShopPage() {
                   <Link key={p.id} href={`/academy/${p.slug}`} style={{ textDecoration: 'none' }}>
                     <div className="fd-product-card">
                       <div className="fd-product-cover" style={{ background: p.cover_url ? undefined : bg, padding: 0 }}>
-                        {p.cover_url ? (
-                          <img src={p.cover_url} alt={p.title} />
-                        ) : (
+                        {p.cover_url ? <img src={p.cover_url} alt={p.title} /> : (
                           <>
                             <div className="fd-product-cover-accent" />
                             <div className="fd-product-cover-label">{typeLabel}</div>
@@ -126,20 +112,9 @@ export default async function ShopPage() {
                         )}
                         <span className="fd-product-cover-badge">{typeLabel}</span>
                       </div>
-
                       <div className="fd-product-body">
                         <h3 className="fd-product-title">{p.title}</h3>
-                        <p style={{
-                          fontSize: 13.5,
-                          color: 'var(--fd-muted)',
-                          lineHeight: 1.6,
-                          margin: 0,
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                          minHeight: '43px',
-                        }}>
+                        <p style={{ fontSize: 13.5, color: 'var(--fd-muted)', lineHeight: 1.6, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '43px' }}>
                           {intro}
                         </p>
                         <div style={{ flex: 1 }} />
