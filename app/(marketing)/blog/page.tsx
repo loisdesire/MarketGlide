@@ -39,15 +39,12 @@ export default async function BlogPage() {
 
   return (
     <>
-      <section style={{ background: 'var(--fd-bg-alt)', borderBottom: '1px solid var(--fd-border)', padding: '64px 0 48px' }}>
+      <section style={{ background: 'var(--fd-bg-alt)', borderBottom: '1px solid var(--fd-border)', padding: '32px 0 28px' }}>
         <div className="fd-container">
           <div className="fd-section-label">Blog</div>
-          <h1 className="fd-section-title" style={{ textAlign: 'left', marginBottom: 12 }}>
+          <h1 style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 800, color: 'var(--fd-navy)', letterSpacing: '-.03em', margin: '6px 0 0' }}>
             Insights for business builders
           </h1>
-          <p style={{ fontSize: 16, color: 'var(--fd-muted)', margin: 0, maxWidth: 480, lineHeight: 1.7 }}>
-            Practical guides on importation, business management, and making the most of our tools.
-          </p>
         </div>
       </section>
 
