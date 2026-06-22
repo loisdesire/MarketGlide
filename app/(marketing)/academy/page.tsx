@@ -46,7 +46,7 @@ export default async function AcademyPage() {
         {/* Crosshatch grid texture */}
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: 'linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px)',
           backgroundSize: '52px 52px',
           pointerEvents: 'none',
         }} />
@@ -70,15 +70,16 @@ export default async function AcademyPage() {
             </div>
           </div>
 
-          {/* Right — feature grid: 3 cards + full-width strip */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+          {/* Right — 2-col bento: Cell 1 hugs content, rest unchanged */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto auto', gap: 8 }}>
 
-            {/* Cell 1 — dark glass: ∞ lifetime (compact, icon inline) */}
+            {/* Cell 1 — dark glass: ∞ lifetime, compact inline, hugs content */}
             <div style={{
+              gridRow: '1 / 3', alignSelf: 'start',
               background: 'rgba(255,255,255,.06)',
               border: '1px solid rgba(255,255,255,.1)',
-              borderRadius: 14, padding: '18px 16px',
-              display: 'flex', alignItems: 'center', gap: 10,
+              borderRadius: 14, padding: '18px 20px',
+              display: 'flex', alignItems: 'center', gap: 12,
             }}>
               <div style={{
                 width: 36, height: 36, borderRadius: 10, flexShrink: 0,
@@ -88,7 +89,7 @@ export default async function AcademyPage() {
                 <span style={{ fontSize: 18, fontWeight: 900, color: '#fff', lineHeight: 1 }}>∞</span>
               </div>
               <div>
-                <div style={{ fontSize: 12.5, fontWeight: 700, color: '#fff', marginBottom: 2 }}>Lifetime access</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 2 }}>Lifetime access</div>
                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,.45)' }}>Buy once. Keep forever.</div>
               </div>
             </div>
@@ -97,7 +98,7 @@ export default async function AcademyPage() {
             <div style={{
               background: 'rgba(249,115,22,.12)',
               border: '1px solid rgba(249,115,22,.25)',
-              borderRadius: 14, padding: '20px 16px',
+              borderRadius: 14, padding: '20px',
             }}>
               <div style={{ fontSize: 42, fontWeight: 900, color: 'var(--fd-orange)', lineHeight: 1 }}>22+</div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,.55)', marginTop: 8, lineHeight: 1.4 }}>
@@ -105,12 +106,12 @@ export default async function AcademyPage() {
               </div>
             </div>
 
-            {/* Cell 3 — dark glass: Africa-first (icon inline) */}
+            {/* Cell 3 — dark glass: Africa-first inline */}
             <div style={{
               background: 'rgba(255,255,255,.06)',
               border: '1px solid rgba(255,255,255,.1)',
-              borderRadius: 14, padding: '18px 16px',
-              display: 'flex', alignItems: 'center', gap: 10,
+              borderRadius: 14, padding: '18px 20px',
+              display: 'flex', alignItems: 'center', gap: 12,
             }}>
               <div style={{
                 width: 36, height: 36, borderRadius: 10, flexShrink: 0,
@@ -120,14 +121,14 @@ export default async function AcademyPage() {
                 <MapPin size={18} color="var(--fd-orange)" />
               </div>
               <div>
-                <div style={{ fontSize: 12.5, fontWeight: 700, color: '#fff', marginBottom: 2 }}>Africa-first</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 2 }}>Africa-first</div>
                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,.45)' }}>Nigeria · Ghana · Kenya</div>
               </div>
             </div>
 
-            {/* Cell 4 — full-width orange strip */}
+            {/* Cell 4 — solid orange strip spanning full width */}
             <div style={{
-              gridColumn: '1 / 4',
+              gridColumn: '1 / 3',
               background: 'var(--fd-orange)',
               borderRadius: 14, padding: '16px 22px',
               display: 'flex', alignItems: 'center', gap: 14,
