@@ -30,13 +30,16 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isApiRoute         = pathname.startsWith('/api');
   const isLoginRoute       = pathname === '/login';
+  const isRegisterRoute    = pathname === '/register';
   const isTrackerAuthRoute = pathname.startsWith('/tracker/login') || pathname.startsWith('/tracker/register');
   const isTrackerAppRoute  = pathname.startsWith('/tracker') && !isTrackerAuthRoute;
   const isAdminRoute       = pathname.startsWith('/admin');
-  const isProtectedRoute   = isTrackerAppRoute || isAdminRoute;
+  const isMembersRoute     = pathname.startsWith('/members');
+  const isAuthPage         = isLoginRoute || isRegisterRoute;
+  const isProtectedRoute   = isTrackerAppRoute || isAdminRoute || isMembersRoute;
 
   // API and all public/marketing routes are always allowed
-  if (isApiRoute || (!isLoginRoute && !isTrackerAuthRoute && !isProtectedRoute)) return supabaseResponse;
+  if (isApiRoute || (!isAuthPage && !isTrackerAuthRoute && !isProtectedRoute)) return supabaseResponse;
 
   // Unauthenticated user trying to access a protected route → platform login
   if (!user && isProtectedRoute) {
@@ -52,12 +55,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Authenticated user on /login → route them to the right place
-  if (user && isLoginRoute) {
+  // Authenticated user on /login or /register → route them to the right place
+  // (actual per-user routing done client-side; proxy just prevents double-login)
+  if (user && isAuthPage) {
     const url = request.nextUrl.clone();
     url.pathname = user.email === process.env.PLATFORM_ADMIN_EMAIL
       ? '/admin'
-      : '/tracker/dashboard';
+      : '/members';
     return NextResponse.redirect(url);
   }
 

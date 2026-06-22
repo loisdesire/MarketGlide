@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { Eye, EyeOff, UserPlus } from 'lucide-react';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router   = useRouter();
   const supabase = createClient();
 
+  const [fullName, setFullName] = useState('');
   const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
   const [showPw,   setShowPw]   = useState(false);
@@ -18,31 +19,34 @@ export default function LoginPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
+
     setLoading(true);
     setError('');
 
-    const { data, error: authErr } = await supabase.auth.signInWithPassword({ email, password });
-    if (authErr || !data.user) {
-      setError(authErr?.message ?? 'Invalid email or password.');
+    // Server creates the account without email confirmation
+    const res  = await fetch('/api/platform/register', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ full_name: fullName, email, password }),
+    });
+    const data = await res.json() as { error?: string };
+
+    if (!res.ok) {
+      setError(data.error ?? 'Registration failed. Please try again.');
       setLoading(false);
       return;
     }
 
-    // Admin → admin panel
-    if (data.user.email === process.env.NEXT_PUBLIC_PLATFORM_ADMIN_EMAIL) {
-      router.push('/admin');
-      router.refresh();
+    // Sign in immediately after account creation
+    const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInErr) {
+      setError('Account created but sign-in failed — please go to the login page.');
+      setLoading(false);
       return;
     }
 
-    // Check if this user has a tracker business — if yes, send to tracker dashboard
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('business_id')
-      .eq('id', data.user.id)
-      .single();
-
-    router.push(profile?.business_id ? '/tracker/dashboard' : '/members');
+    router.push('/members');
     router.refresh();
   }
 
@@ -66,10 +70,10 @@ export default function LoginPage() {
         boxShadow: '0 4px 24px rgba(0,0,0,.06)',
       }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--fd-navy)', margin: '0 0 6px', letterSpacing: '-.03em' }}>
-          Sign in
+          Create your account
         </h1>
         <p style={{ fontSize: 13.5, color: 'var(--fd-muted)', margin: '0 0 28px' }}>
-          Access your dashboard, courses, and tools.
+          Access courses, guides, and tools from Flom Digital.
         </p>
 
         {error && (
@@ -79,6 +83,21 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--fd-navy)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '.04em' }}>
+              Full name
+            </label>
+            <input
+              type="text"
+              required
+              autoComplete="name"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              placeholder="Your full name"
+              style={{ width: '100%', padding: '10px 14px', border: '1.5px solid var(--fd-border)', borderRadius: 8, fontSize: 14, outline: 'none', boxSizing: 'border-box', color: 'var(--fd-navy)' }}
+            />
+          </div>
+
           <div style={{ marginBottom: 16 }}>
             <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--fd-navy)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '.04em' }}>
               Email
@@ -95,19 +114,18 @@ export default function LoginPage() {
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
-              <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--fd-navy)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
-                Password
-              </label>
-            </div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--fd-navy)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '.04em' }}>
+              Password
+            </label>
             <div style={{ position: 'relative' }}>
               <input
                 type={showPw ? 'text' : 'password'}
                 required
-                autoComplete="current-password"
+                minLength={6}
+                autoComplete="new-password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Min 6 characters"
                 style={{ width: '100%', padding: '10px 42px 10px 14px', border: '1.5px solid var(--fd-border)', borderRadius: 8, fontSize: 14, outline: 'none', boxSizing: 'border-box', color: 'var(--fd-navy)' }}
               />
               <button
@@ -126,21 +144,15 @@ export default function LoginPage() {
             className="fd-btn fd-btn-primary"
             style={{ width: '100%', justifyContent: 'center', padding: '12px', fontSize: 15, fontWeight: 700, opacity: loading ? .7 : 1 }}
           >
-            <LogIn size={16} />
-            {loading ? 'Signing in…' : 'Sign in'}
+            <UserPlus size={16} />
+            {loading ? 'Creating account…' : 'Create account'}
           </button>
         </form>
 
         <p style={{ margin: '20px 0 0', textAlign: 'center', fontSize: 13, color: 'var(--fd-muted)' }}>
-          Don&apos;t have an account?{' '}
-          <Link href="/register" style={{ color: 'var(--fd-orange)', fontWeight: 600, textDecoration: 'none' }}>
-            Create one free
-          </Link>
-        </p>
-        <p style={{ margin: '10px 0 0', textAlign: 'center', fontSize: 12, color: 'var(--fd-muted)' }}>
-          Sales tracker?{' '}
-          <Link href="/tracker/register" style={{ color: 'var(--fd-muted)', textDecoration: 'underline' }}>
-            Register a business
+          Already have an account?{' '}
+          <Link href="/login" style={{ color: 'var(--fd-orange)', fontWeight: 600, textDecoration: 'none' }}>
+            Sign in
           </Link>
         </p>
       </div>
