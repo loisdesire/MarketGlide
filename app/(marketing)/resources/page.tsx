@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Download, FileText, CheckSquare, BarChart2, Truck, DollarSign } from 'lucide-react';
+import EmailForm from './EmailForm';
 
 export const metadata: Metadata = {
   title: 'Free Resources',
@@ -46,17 +47,7 @@ export default function ResourcesPage() {
             <p style={{ fontSize: 14, color: 'var(--fd-muted)', margin: '0 0 22px', lineHeight: 1.7 }}>
               Enter your email and we'll send you new templates, checklists, and guides as soon as they're available.
             </p>
-            <form style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }} onSubmit={e => e.preventDefault()}>
-              <input
-                type="email"
-                placeholder="your@email.com"
-                required
-                style={{ flex: 1, minWidth: 200, padding: '10px 14px', borderRadius: 8, border: '1.5px solid var(--fd-border)', fontSize: 14, outline: 'none' }}
-              />
-              <button type="submit" className="fd-btn fd-btn-primary" style={{ whiteSpace: 'nowrap' }}>
-                Notify me <ArrowRight size={14} />
-              </button>
-            </form>
+            <EmailForm />
           </div>
         </div>
       </section>
