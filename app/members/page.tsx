@@ -209,7 +209,7 @@ function ProductCard({ product: p, owned }: { product: Product; owned: boolean }
             <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--fd-navy)' }}>
               {p.price_usd === 0 ? 'Free' : fmt(p.price_usd)}
             </span>
-            <BuyButton slug={p.slug} price={p.price_usd} label="Get access" />
+            <BuyButton slug={p.slug} label="Get access" />
           </div>
         )}
       </div>

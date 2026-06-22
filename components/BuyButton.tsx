@@ -4,13 +4,12 @@ import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 interface Props {
-  slug:      string;
-  price:     number;
+  slug:       string;
   className?: string;
-  label?:    string;
+  label?:     string;
 }
 
-export default function BuyButton({ slug, price, className, label }: Props) {
+export default function BuyButton({ slug, className, label }: Props) {
   const [loading, setLoading] = useState(false);
 
   async function handleBuy() {
@@ -44,7 +43,7 @@ export default function BuyButton({ slug, price, className, label }: Props) {
       {loading ? (
         'Redirecting…'
       ) : (
-        <>{label ?? `Buy — $${price}`} <ArrowRight size={13} /></>
+        <>{label ?? 'Buy now'} <ArrowRight size={13} /></>
       )}
     </button>
   );

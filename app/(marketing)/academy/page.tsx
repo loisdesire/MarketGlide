@@ -189,7 +189,7 @@ export default async function AcademyPage() {
                         </span>
                         {p.price_usd === 0
                           ? <Link href={`/academy/${p.slug}`} className="fd-btn fd-btn-primary fd-btn-sm">Get free <ArrowRight size={13} /></Link>
-                          : <BuyButton slug={p.slug} price={p.price_usd} />
+                          : <BuyButton slug={p.slug} />
                         }
                       </div>
                     </div>
