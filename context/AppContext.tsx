@@ -98,5 +98,5 @@ export function useApp() {
 export async function signOut() {
   const supabase = createClient();
   await supabase.auth.signOut();
-  window.location.href = '/tracker/login';
+  window.location.href = '/login';
 }
