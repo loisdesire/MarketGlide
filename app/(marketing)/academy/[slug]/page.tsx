@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import type { ElementType } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, BookOpen, Video, FileText, Package, ArrowRight } from 'lucide-react';
@@ -7,7 +8,7 @@ import ProductCTA from '@/components/ProductCTA';
 
 type Props = { params: Promise<{ slug: string }> };
 
-const TYPE_META: Record<string, { badge: string; color: string; includes: string[]; Icon: React.ElementType }> = {
+const TYPE_META: Record<string, { badge: string; color: string; includes: string[]; Icon: ElementType }> = {
   course: {
     badge:    'Course',
     color:    '#3B82F6',
@@ -68,7 +69,7 @@ export default async function ProductSqueezePage({ params }: Props) {
   const { Icon } = meta;
 
   // Split description into lines — admin writes each benefit on its own line
-  const lines = (product.description ?? '').split('\n').map(l => l.trim()).filter(Boolean);
+  const lines = (product.description ?? '').split('\n').map((l: string) => l.trim()).filter(Boolean);
   const [intro, ...benefits] = lines;
 
   const ctaLabel = product.type === 'course' ? 'Enroll Now' : product.type === 'guide' ? 'Get the Guide' : 'Get Access';

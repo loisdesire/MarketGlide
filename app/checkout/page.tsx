@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
@@ -8,12 +8,12 @@ import { Clock, Mail, ArrowLeft } from 'lucide-react';
 
 type Product = { title: string; price_usd: number; type: string };
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const params   = useSearchParams();
   const slug     = params.get('product') ?? '';
   const supabase = createClient();
 
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product,   setProduct]   = useState<Product | null>(null);
   const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
@@ -87,5 +87,15 @@ export default function CheckoutPage() {
         </Link>
       </div>
     </>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ height: 60, width: 300, background: '#f3f4f6', borderRadius: 12, animation: 'pulse 1.5s ease infinite' }} />
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }
