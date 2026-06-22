@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, BookOpen, Download, Clock } from 'lucide-react';
+import { CheckCircle, BookOpen, Download, Clock } from 'lucide-react';
+import ProductCTA from '@/components/ProductCTA';
 
 export const metadata: Metadata = {
   title: 'Mini Importation Mastery Guide',
@@ -56,9 +57,7 @@ export default function MiniImportationGuidePage() {
                   <Download size={14} /> Lifetime access
                 </div>
               </div>
-              <Link href="/contact" className="fd-btn fd-btn-primary" style={{ fontSize: 15, padding: '12px 24px' }}>
-                Get the Guide — $30 <ArrowRight size={15} />
-              </Link>
+              <ProductCTA slug="mini-importation-guide" label="Get the Guide" />
             </div>
 
             {/* Book visual */}
@@ -98,7 +97,7 @@ export default function MiniImportationGuidePage() {
             Immediate download. Read on any device. Apply the knowledge to your first or next shipment.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/contact" className="fd-btn fd-btn-primary">Get the Guide — $30 <ArrowRight size={14} /></Link>
+            <ProductCTA slug="mini-importation-guide" label="Get the Guide" />
             <Link href="/academy/mini-importation-course" className="fd-btn fd-btn-outline">Prefer the full course?</Link>
           </div>
         </div>

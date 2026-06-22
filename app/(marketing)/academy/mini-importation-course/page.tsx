@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, GraduationCap, Users, Video, MessageCircle } from 'lucide-react';
+import { CheckCircle, GraduationCap, Users, Video, MessageCircle } from 'lucide-react';
+import ProductCTA from '@/components/ProductCTA';
 
 export const metadata: Metadata = {
   title: 'Mini Importation Mastery Course',
@@ -47,9 +48,7 @@ export default function MiniImportationCoursePage() {
                 <span style={{ fontSize: 36, fontWeight: 900, color: '#fff' }}>$20</span>
                 <span style={{ fontSize: 13, color: 'rgba(255,255,255,.5)' }}>One-time payment, lifetime access</span>
               </div>
-              <Link href="/contact" className="fd-btn fd-btn-primary" style={{ fontSize: 15, padding: '12px 24px' }}>
-                Enroll Now <ArrowRight size={15} />
-              </Link>
+              <ProductCTA slug="mini-importation-course" label="Enroll Now" />
             </div>
 
             {/* Course includes */}
@@ -94,7 +93,7 @@ export default function MiniImportationCoursePage() {
             One payment. Lifetime access. Practical knowledge you can apply to your first shipment immediately.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/contact" className="fd-btn fd-btn-primary">Enroll Now — $20 <ArrowRight size={14} /></Link>
+            <ProductCTA slug="mini-importation-course" label="Enroll Now" />
             <Link href="/academy/mini-importation-guide" className="fd-btn fd-btn-outline">Prefer the written guide?</Link>
           </div>
         </div>
