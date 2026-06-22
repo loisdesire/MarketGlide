@@ -13,6 +13,7 @@ const NAV: Item[] = [
   { label: 'Academy',  href: '/academy' },
   {
     label: 'Business Tools',
+    href: '/business-tools',
     children: [
       { label: 'Sales & Inventory Tracker',  href: '/tracker/login',                          badge: 'Live' },
       { label: 'Landed Cost Calculator',     href: '/business-tools/shipping-calculator' },
@@ -49,10 +50,13 @@ export default function Header() {
             <li key={item.label} className="fd-nav-item">
               {item.children ? (
                 <>
-                  <button className="fd-nav-link">
+                  <Link
+                    href={item.href ?? '#'}
+                    className={`fd-nav-link${pathname === item.href ? ' active' : ''}`}
+                  >
                     {item.label}
                     <ChevronDown size={14} />
-                  </button>
+                  </Link>
                   <div className="fd-dropdown">
                     {item.children.map(child => (
                       <Link key={child.label} href={child.href} className="fd-dropdown-link">

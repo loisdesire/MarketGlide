@@ -1,38 +1,55 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Wrench, Zap, CheckCircle } from 'lucide-react';
+import { ArrowRight, Wrench, CheckCircle, DollarSign } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Business Tools',
-  description: 'Free business tools from Flom Digital: Landed Cost Calculator, Invoice Generator, Currency Converter, and more.',
+  description: 'Business tools from Flom Digital: Landed Cost Calculator, Invoice Generator, Currency Converter, and more.',
 };
 
 const TOOLS = [
   {
-    type:  'Free Tool',
+    type:  'Pro App',
+    cover: 'linear-gradient(150deg,#064e3b 0%,#0f172a 60%,#1a2e22 100%)',
+    title: 'Sales & Inventory Tracker',
+    desc:  'Full-featured business tracker: manage products, sales, purchases, customers, invoices, and reports. Multi-user and multi-currency.',
+    href:  '/tracker/login',
+    price: '$20',
+    badgeLabel: 'Pro',
+    badgeColor: '#7c3aed',
+    features: ['Multi-user', 'Multi-currency', 'Invoices & reports', 'Inventory tracking'],
+  },
+  {
+    type:  'Paid Tool',
     cover: 'linear-gradient(150deg,#7c2d12 0%,#ea580c 55%,#431407 100%)',
     title: 'Landed Cost Calculator',
     desc:  'Full landed cost tool with chargeable weight, freight, customs and duty, total landed cost, and profit margin. Supports 36 currencies.',
     href:  '/business-tools/shipping-calculator',
-    badge: 'Free',
+    price: '$20',
+    badgeLabel: '$20',
+    badgeColor: '#ea580c',
     features: ['Chargeable weight', 'Duty & customs', 'Profit margin', '36 currencies'],
   },
   {
-    type:  'Free Tool',
+    type:  'Paid Tool',
     cover: 'linear-gradient(150deg,#1d3060 0%,#3B82F6 55%,#1e293b 100%)',
     title: 'Invoice Generator',
     desc:  'Create professional invoices with your branding, line items, taxes, and discounts. Print directly or save as PDF.',
     href:  '/business-tools/invoice-generator',
-    badge: 'Free',
+    price: '$5',
+    badgeLabel: '$5',
+    badgeColor: '#3B82F6',
     features: ['Custom branding', 'Line items & taxes', 'PDF export', 'Print-ready'],
   },
   {
-    type:  'Free Tool',
+    type:  'Paid Tool',
     cover: 'linear-gradient(150deg,#2d1b69 0%,#7c3aed 55%,#1e1b4b 100%)',
     title: 'Receipt Generator',
     desc:  'Generate clean point-of-sale receipts in seconds. Perfect for market traders, retail businesses, and pop-up shops.',
     href:  '/business-tools/receipt-generator',
-    badge: 'Free',
+    price: '$5',
+    badgeLabel: '$5',
+    badgeColor: '#7c3aed',
     features: ['POS-style receipts', 'Custom business name', 'Instant print', 'Zero setup'],
   },
   {
@@ -41,17 +58,10 @@ const TOOLS = [
     title: 'Currency Converter',
     desc:  'Live exchange rates for USD, GBP, EUR, NGN, CNY, and more. Built for importers dealing in multiple currencies daily.',
     href:  '/business-tools/currency-converter',
-    badge: 'Free',
-    features: ['Live rates', 'USD · GBP · EUR', 'NGN · CNY · GHS', 'Instant convert'],
-  },
-  {
-    type:  'Pro App',
-    cover: 'linear-gradient(150deg,#064e3b 0%,#0f172a 60%,#1a2e22 100%)',
-    title: 'Sales & Inventory Tracker',
-    desc:  'Full-featured business tracker: manage products, sales, purchases, customers, invoices, and reports. Multi-user and multi-currency.',
-    href:  '/tracker/login',
-    badge: 'Pro',
-    features: ['Multi-user', 'Multi-currency', 'Invoices & reports', 'Inventory tracking'],
+    price: 'Free',
+    badgeLabel: 'Free',
+    badgeColor: '#16a34a',
+    features: ['Live rates', 'USD · GBP · EUR', 'NGN · CNY · GHS', 'No sign-up needed'],
   },
 ];
 
@@ -68,8 +78,8 @@ export default function BusinessToolsPage() {
               <span className="accent">your business.</span>
             </h1>
             <p className="fd-hero-sub">
-              Everything a growing business needs — calculators, invoicing, receipts,
-              currency conversion, and a full inventory tracker. Most are completely free.
+              Calculators, invoicing, receipts, currency conversion, and a full inventory
+              tracker. Pay once, use forever — starting from just $5.
             </p>
             <div className="fd-hero-ctas">
               <a href="#tools" className="fd-btn fd-btn-primary">Explore Tools <ArrowRight size={16} /></a>
@@ -90,11 +100,11 @@ export default function BusinessToolsPage() {
               </div>
               <div className="fd-hero-card">
                 <div className="fd-hero-card-icon" style={{ background: '#16a34a' }}>
-                  <Zap size={20} color="#fff" />
+                  <DollarSign size={20} color="#fff" />
                 </div>
                 <div>
-                  <div className="fd-hero-card-title">No sign-up needed</div>
-                  <div className="fd-hero-card-sub">Most tools open instantly in your browser</div>
+                  <div className="fd-hero-card-title">One-time payment</div>
+                  <div className="fd-hero-card-sub">Pay once · access forever · from $5</div>
                 </div>
               </div>
               <div className="fd-hero-stat-row">
@@ -103,8 +113,8 @@ export default function BusinessToolsPage() {
                   <div className="fd-hero-stat-lbl">Tools</div>
                 </div>
                 <div className="fd-hero-stat">
-                  <div className="fd-hero-stat-val">4</div>
-                  <div className="fd-hero-stat-lbl">Free</div>
+                  <div className="fd-hero-stat-val">$5</div>
+                  <div className="fd-hero-stat-lbl">From</div>
                 </div>
                 <div className="fd-hero-stat">
                   <div className="fd-hero-stat-val">36</div>
@@ -126,20 +136,15 @@ export default function BusinessToolsPage() {
             {TOOLS.map(t => (
               <Link key={t.title} href={t.href} style={{ textDecoration: 'none' }}>
                 <div className="fd-product-card">
-                  {/* Cover */}
                   <div className="fd-product-cover" style={{ background: t.cover, padding: 0 }}>
                     <div className="fd-product-cover-accent" />
                     <div className="fd-product-cover-label">{t.type}</div>
                     <div className="fd-product-cover-title">{t.title}</div>
-                    <span
-                      className="fd-product-cover-badge"
-                      style={{ background: t.badge === 'Free' ? '#16a34a' : '#7c3aed' }}
-                    >
-                      {t.badge}
+                    <span className="fd-product-cover-badge" style={{ background: t.badgeColor }}>
+                      {t.badgeLabel}
                     </span>
                   </div>
 
-                  {/* Body */}
                   <div className="fd-product-body">
                     <h3 className="fd-product-title">{t.title}</h3>
                     <p style={{
@@ -156,7 +161,6 @@ export default function BusinessToolsPage() {
                       {t.desc}
                     </p>
 
-                    {/* Feature pills */}
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, margin: '14px 0 0' }}>
                       {t.features.map(f => (
                         <span key={f} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--fd-muted)', background: 'var(--fd-bg-alt)', border: '1px solid var(--fd-border)', borderRadius: 5, padding: '3px 8px' }}>
@@ -168,8 +172,12 @@ export default function BusinessToolsPage() {
 
                     <div style={{ flex: 1 }} />
                     <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: 18, fontWeight: 800, color: t.badge === 'Free' ? '#16a34a' : 'var(--fd-navy)' }}>
-                        {t.badge === 'Free' ? 'Free' : 'Sign in'}
+                      <span style={{
+                        fontSize: 22,
+                        fontWeight: 800,
+                        color: t.price === 'Free' ? '#16a34a' : 'var(--fd-navy)',
+                      }}>
+                        {t.price}
                       </span>
                       <span className="fd-btn fd-btn-primary fd-btn-sm" style={{ pointerEvents: 'none' }}>
                         Open tool <ArrowRight size={13} />
