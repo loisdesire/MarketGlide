@@ -1,21 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, Layers } from 'lucide-react';
+import { ArrowRight, CheckCircle, MapPin, Zap } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export const metadata: Metadata = {
   title: 'Academy',
   description: 'Practical importation education and business courses from Flom Digital.',
 };
-
-const CURRICULUM = [
-  'Identifying winning products to import',
-  'Finding & vetting verified suppliers',
-  'Shipping terms, freight & logistics',
-  'Customs, duties & landing costs',
-  'Pricing strategies for maximum profit',
-  'Your first sale — start to finish',
-];
 
 const TYPE_COLORS: Record<string, string> = {
   course:      'linear-gradient(150deg,#1d3060 0%,#3B82F6 55%,#1e293b 100%)',
@@ -51,7 +42,7 @@ export default async function AcademyPage() {
   return (
     <>
       {/* ── Hero ── */}
-      <section style={{ background: 'var(--fd-navy)', color: '#fff', padding: '80px 0 72px', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ background: 'var(--fd-navy)', color: '#fff', padding: '88px 0 80px', position: 'relative', overflow: 'hidden' }}>
         {/* Subtle horizontal rule texture */}
         <div style={{
           position: 'absolute', inset: 0,
@@ -61,7 +52,8 @@ export default async function AcademyPage() {
         }} />
 
         <div className="fd-hero-inner" style={{ position: 'relative' }}>
-          {/* Left — headline + CTAs */}
+
+          {/* Left */}
           <div>
             <span className="fd-hero-eyebrow">Flom Academy</span>
             <h1 className="fd-hero-headline">
@@ -78,69 +70,74 @@ export default async function AcademyPage() {
             </div>
           </div>
 
-          {/* Right — course outline card (white on dark, no gradient) */}
-          <div style={{
-            background: '#fff', borderRadius: 16, overflow: 'hidden',
-            boxShadow: '0 24px 64px rgba(0,0,0,.35)',
-          }}>
-            {/* Card header */}
+          {/* Right — bento feature grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto auto', gap: 8 }}>
+
+            {/* Cell 1 — large, white, lifetime access */}
             <div style={{
-              background: 'var(--fd-navy)', borderBottom: '3px solid var(--fd-orange)',
-              padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              gridRow: '1 / 3',
+              background: '#fff', borderRadius: 14,
+              padding: '28px 22px',
+              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
             }}>
-              <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--fd-orange)' }}>
-                Course outline
+              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--fd-orange)' }}>
+                Lifetime access
               </span>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontWeight: 500 }}>
-                22+ chapters
-              </span>
+              <div style={{ fontSize: 68, fontWeight: 900, color: 'var(--fd-navy)', lineHeight: 1, margin: '12px 0' }}>∞</div>
+              <p style={{ fontSize: 12.5, color: 'var(--fd-muted)', lineHeight: 1.6, margin: 0 }}>
+                Buy once. Your content is there whenever you need it — no expiry.
+              </p>
             </div>
 
-            {/* Chapter list */}
-            <div style={{ padding: '8px 0' }}>
-              {CURRICULUM.map((topic, i) => (
-                <div key={topic} style={{
-                  display: 'flex', gap: 14, alignItems: 'center',
-                  padding: '11px 24px',
-                  borderBottom: i < CURRICULUM.length - 1 ? '1px solid #f1f5f9' : 'none',
-                }}>
-                  <span style={{
-                    width: 26, height: 26, borderRadius: 7,
-                    background: i < 2 ? 'var(--fd-orange)' : '#fff7ed',
-                    color: i < 2 ? '#fff' : 'var(--fd-orange)',
-                    fontSize: 11, fontWeight: 800,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                  }}>
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span style={{ fontSize: 13.5, color: 'var(--fd-text)', lineHeight: 1.4, fontWeight: i < 2 ? 600 : 400 }}>
-                    {topic}
-                  </span>
-                  {i < 2 && (
-                    <CheckCircle size={14} color="var(--fd-orange)" style={{ marginLeft: 'auto', flexShrink: 0 }} />
-                  )}
+            {/* Cell 2 — stat: chapters */}
+            <div style={{
+              background: 'rgba(249,115,22,.12)',
+              border: '1px solid rgba(249,115,22,.25)',
+              borderRadius: 14, padding: '20px',
+            }}>
+              <div style={{ fontSize: 42, fontWeight: 900, color: 'var(--fd-orange)', lineHeight: 1 }}>22+</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,.55)', marginTop: 8, lineHeight: 1.4 }}>
+                In-depth chapters, zero filler
+              </div>
+            </div>
+
+            {/* Cell 3 — Africa-focused */}
+            <div style={{
+              background: 'rgba(255,255,255,.06)',
+              border: '1px solid rgba(255,255,255,.1)',
+              borderRadius: 14, padding: '18px 20px',
+              display: 'flex', alignItems: 'center', gap: 12,
+            }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 10,
+                background: 'rgba(249,115,22,.15)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              }}>
+                <MapPin size={18} color="var(--fd-orange)" />
+              </div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 2 }}>Africa-first</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,.45)' }}>Nigeria · Ghana · Kenya</div>
+              </div>
+            </div>
+
+            {/* Cell 4 — full-width bottom: practical */}
+            <div style={{
+              gridColumn: '1 / 3',
+              background: 'var(--fd-orange)',
+              borderRadius: 14, padding: '16px 22px',
+              display: 'flex', alignItems: 'center', gap: 14,
+            }}>
+              <Zap size={20} color="#fff" fill="#fff" style={{ flexShrink: 0 }} />
+              <div>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: '#fff' }}>Practical, not theoretical</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,.75)', marginTop: 2 }}>
+                  Built by someone who actually runs an importation business
                 </div>
-              ))}
+              </div>
+              <CheckCircle size={18} color="rgba(255,255,255,.6)" style={{ marginLeft: 'auto', flexShrink: 0 }} />
             </div>
 
-            {/* Card footer */}
-            <div style={{
-              background: '#f8fafc', borderTop: '1px solid #e2e8f0',
-              padding: '14px 24px', display: 'flex', alignItems: 'center', gap: 24,
-            }}>
-              <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-                <Layers size={13} color="var(--fd-muted)" />
-                <span style={{ fontSize: 12, color: 'var(--fd-muted)' }}>+ 16 more chapters</span>
-              </div>
-              <div style={{ marginLeft: 'auto', display: 'flex', gap: 20 }}>
-                {[['22+', 'Chapters'], ['∞', 'Access']].map(([v, l]) => (
-                  <div key={l} style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 17, fontWeight: 800, color: 'var(--fd-navy)', lineHeight: 1 }}>{v}</div>
-                    <div style={{ fontSize: 10, color: 'var(--fd-muted)', marginTop: 3, textTransform: 'uppercase', letterSpacing: '.05em' }}>{l}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </section>
