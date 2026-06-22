@@ -6,9 +6,16 @@ import Link from 'next/link';
 import { ArrowLeft, Save, Eye, EyeOff, Trash2 } from 'lucide-react';
 import FileUpload from '@/app/admin/FileUpload';
 
-const CATEGORIES = [
-  'importation', 'business', 'tips-and-tricks', 'market-research',
-  'logistics', 'finance', 'success-stories', 'news',
+const CATEGORIES: { value: string; label: string }[] = [
+  { value: 'importation',       label: 'Importation' },
+  { value: 'entrepreneurship',  label: 'Entrepreneurship' },
+  { value: 'business-ideas',    label: 'Business Ideas' },
+  { value: 'ai-automation',     label: 'AI & Automation' },
+  { value: 'marketing',         label: 'Marketing' },
+  { value: 'sales',             label: 'Sales' },
+  { value: 'financial-literacy',label: 'Financial Literacy' },
+  { value: 'wealth-building',   label: 'Wealth Building' },
+  { value: 'productivity',      label: 'Productivity' },
 ];
 
 function slugify(str: string) {
@@ -181,9 +188,9 @@ export default function EditBlogPostPage() {
 
               <div className="adm-field">
                 <label>Category</label>
-                <select value={form.category ?? 'business'} onChange={e => set('category', e.target.value)}>
+                <select value={form.category ?? 'importation'} onChange={e => set('category', e.target.value)}>
                   {CATEGORIES.map(c => (
-                    <option key={c} value={c}>{c.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>
+                    <option key={c.value} value={c.value}>{c.label}</option>
                   ))}
                 </select>
               </div>

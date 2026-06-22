@@ -106,7 +106,6 @@ export default function ProductCTA({ slug, label = 'Get Access' }: Props) {
     return (
       <BuyButton
         slug={slug}
-        price={product.price_usd}
         label={label}
         className="fd-btn fd-btn-primary"
       />

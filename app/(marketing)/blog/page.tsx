@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Clock, BookOpen } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/admin';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Blog | Flom Digital',
   description: 'Practical guides on importation, business management, and making the most of our tools.',
