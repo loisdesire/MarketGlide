@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Package, ToggleLeft, ToggleRight, Plus, Edit } from 'lucide-react';
+import { Package, ToggleLeft, ToggleRight, Plus, Edit, BookOpen } from 'lucide-react';
 
 type Product = {
   id: string; slug: string; title: string; type: string; section: string;
@@ -134,6 +134,11 @@ export default function AdminProductsPage() {
                         <Link href={`/admin/products/${p.id}`} className="adm-btn adm-btn-ghost adm-btn-sm">
                           <Edit size={13} /> Edit
                         </Link>
+                        {p.type === 'course' && (
+                          <Link href={`/admin/courses/${p.id}`} className="adm-btn adm-btn-ghost adm-btn-sm" style={{ color: '#7c3aed' }}>
+                            <BookOpen size={13} /> Content
+                          </Link>
+                        )}
                       </td>
                     </tr>
                   ))}

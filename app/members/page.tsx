@@ -186,7 +186,18 @@ function ProductCard({ product: p, owned }: { product: Product; owned: boolean }
       {/* CTA */}
       <div style={{ flexShrink: 0, textAlign: 'right' }}>
         {owned ? (
-          p.file_url ? (
+          p.type === 'course' ? (
+            <Link
+              href={`/members/courses/${p.slug}`}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                background: '#16a34a', color: '#fff', fontWeight: 700, fontSize: 13,
+                padding: '8px 16px', borderRadius: 8, textDecoration: 'none',
+              }}
+            >
+              Watch course <ExternalLink size={12} />
+            </Link>
+          ) : p.file_url ? (
             <a
               href={p.file_url}
               target="_blank"
@@ -197,7 +208,7 @@ function ProductCard({ product: p, owned }: { product: Product; owned: boolean }
                 padding: '8px 16px', borderRadius: 8, textDecoration: 'none',
               }}
             >
-              {p.type === 'course' ? 'Watch' : 'Download'} <ExternalLink size={12} />
+              Download <ExternalLink size={12} />
             </a>
           ) : (
             <span style={{ fontSize: 12, color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
