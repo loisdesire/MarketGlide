@@ -9,7 +9,7 @@ export async function GET() {
   const admin = createAdminClient();
   const { data, error: dbErr } = await admin
     .from('user_purchases')
-    .select('id, email, amount_usd, payment_provider, status, created_at, platform_products(title, slug)')
+    .select('id, email, amount_usd, payment_provider, stripe_payment_intent, status, created_at, platform_products(title, slug)')
     .order('created_at', { ascending: false });
 
   if (dbErr) return jsonError(dbErr.message);

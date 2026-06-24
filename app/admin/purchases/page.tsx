@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, RotateCcw } from 'lucide-react';
 
 type Purchase = {
   id: string;
   email: string;
   amount_usd: number;
   payment_provider: string;
+  stripe_payment_intent: string | null;
   status: string;
   created_at: string;
   platform_products: { title: string; slug: string } | null;
@@ -20,13 +21,29 @@ function fmt(iso: string) {
 export default function PurchasesPage() {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading,   setLoading]   = useState(true);
+  const [refunding, setRefunding] = useState<string | null>(null);
+  const [msg,       setMsg]       = useState('');
+  const [err,       setErr]       = useState('');
 
-  useEffect(() => {
-    fetch('/api/admin/purchases')
-      .then(r => r.json())
-      .then((res: { data: Purchase[] }) => setPurchases(res.data ?? []))
-      .finally(() => setLoading(false));
-  }, []);
+  async function load() {
+    const res = await fetch('/api/admin/purchases');
+    const data = await res.json() as { data: Purchase[] };
+    setPurchases(data.data ?? []);
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, []);
+
+  async function handleRefund(p: Purchase) {
+    if (!confirm(`Refund $${p.amount_usd.toFixed(2)} to ${p.email}? This cannot be undone.`)) return;
+    setRefunding(p.id); setErr(''); setMsg('');
+    const res = await fetch(`/api/admin/purchases/${p.id}/refund`, { method: 'POST' });
+    const data = await res.json() as { error?: string };
+    setRefunding(null);
+    if (!res.ok) { setErr(data.error ?? 'Refund failed.'); return; }
+    setMsg(`Refund issued to ${p.email}.`);
+    load();
+  }
 
   const total = purchases.reduce((sum, p) => sum + (p.status === 'completed' ? p.amount_usd : 0), 0);
 
@@ -42,6 +59,9 @@ export default function PurchasesPage() {
       </div>
 
       <div className="adm-page">
+        {msg && <div className="adm-alert adm-alert-success">{msg}</div>}
+        {err && <div className="adm-alert adm-alert-error">{err}</div>}
+
         <div className="adm-card" style={{ padding: 0, overflow: 'hidden' }}>
           {loading ? (
             <div className="adm-empty"><p>Loading…</p></div>
@@ -61,6 +81,7 @@ export default function PurchasesPage() {
                     <th>Provider</th>
                     <th>Status</th>
                     <th>Date</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -85,6 +106,20 @@ export default function PurchasesPage() {
                         </span>
                       </td>
                       <td style={{ color: '#6b7280', whiteSpace: 'nowrap' }}>{fmt(p.created_at)}</td>
+                      <td>
+                        {p.status === 'completed' && (
+                          <button
+                            onClick={() => handleRefund(p)}
+                            disabled={refunding === p.id}
+                            className="adm-btn adm-btn-ghost adm-btn-sm"
+                            style={{ color: '#ef4444' }}
+                            title="Issue refund"
+                          >
+                            <RotateCcw size={13} />
+                            {refunding === p.id ? 'Refunding…' : 'Refund'}
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
