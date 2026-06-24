@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import ScrollToTop from './ScrollToTop';
+import NewsletterStrip from './NewsletterStrip';
 
 const COLS = [
   {
@@ -93,7 +94,9 @@ export default function Footer() {
         ))}
       </div>
 
-      <div style={{ borderTop: '1px solid rgba(255,255,255,.09)' }}>
+      <NewsletterStrip />
+
+      <div>
         <div className="fd-footer-bottom">
           <span style={{ fontSize: 12, color: 'rgba(255,255,255,.35)' }}>
             © {year} Flom Digital. All rights reserved.

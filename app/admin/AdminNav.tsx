@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, Package, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, FileText, Package, MessageSquare, ShoppingBag } from 'lucide-react';
 
 const NAV = [
-  { label: 'Dashboard',  href: '/admin',          Icon: LayoutDashboard },
-  { label: 'Blog Posts', href: '/admin/blog',      Icon: FileText },
-  { label: 'Products',   href: '/admin/products',  Icon: Package },
-  { label: 'Enquiries',  href: '/admin/enquiries', Icon: MessageSquare },
+  { label: 'Dashboard',  href: '/admin',           Icon: LayoutDashboard },
+  { label: 'Blog Posts', href: '/admin/blog',       Icon: FileText },
+  { label: 'Products',   href: '/admin/products',   Icon: Package },
+  { label: 'Purchases',  href: '/admin/purchases',  Icon: ShoppingBag },
+  { label: 'Enquiries',  href: '/admin/enquiries',  Icon: MessageSquare },
 ];
 
 export default function AdminNav() {
