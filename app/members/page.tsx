@@ -7,14 +7,14 @@ import { BookOpen, FileText, ShoppingBag, ExternalLink, LogOut, CheckCircle2 } f
 import BuyButton from '@/components/BuyButton';
 
 type Product = {
-  id: string;
-  slug: string;
-  title: string;
+  id:          string;
+  slug:        string;
+  title:       string;
   description: string;
-  type: string;
-  price_usd: number;
-  cover_url: string;
-  file_url: string;
+  type:        string;
+  price_usd:   number;
+  cover_url:   string;
+  file_url:    string;
 };
 
 type AuthUser = { id: string; email: string | undefined; user_metadata: { full_name?: string } };
@@ -59,7 +59,7 @@ export default function MembersPage() {
       ]);
 
       setProducts(productsRes.data ?? []);
-      setOwnedIds(new Set((purchasesRes.data ?? []).map(p => p.product_id)));
+      setOwnedIds(new Set((purchasesRes.data ?? []).map((p: { product_id: string }) => p.product_id)));
       setLoading(false);
     }
     load();
@@ -74,8 +74,8 @@ export default function MembersPage() {
     ?? user?.email?.split('@')[0]
     ?? 'there';
 
-  const owned     = products.filter(p => ownedIds.has(p.id));
-  const available = products.filter(p => !ownedIds.has(p.id));
+  const owned     = products.filter(p => p.price_usd === 0 || ownedIds.has(p.id));
+  const available = products.filter(p => p.price_usd > 0 && !ownedIds.has(p.id));
 
   return (
     <div style={{ maxWidth: 820, margin: '0 auto', padding: '40px 20px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>

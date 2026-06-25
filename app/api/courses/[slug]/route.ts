@@ -18,23 +18,25 @@ export async function GET(_req: Request, { params }: Params) {
   // Get product
   const { data: product } = await admin
     .from('platform_products')
-    .select('id, title, description, type')
+    .select('id, title, description, type, price_usd')
     .eq('slug', slug)
     .eq('is_active', true)
     .maybeSingle();
 
   if (!product) return jsonError('Product not found.', 404);
 
-  // Check purchase (unless it's free)
-  const { data: purchase } = await admin
-    .from('user_purchases')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('product_id', product.id)
-    .eq('status', 'completed')
-    .maybeSingle();
+  // Free products are accessible to any authenticated user
+  if (product.price_usd > 0) {
+    const { data: purchase } = await admin
+      .from('user_purchases')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('product_id', product.id)
+      .eq('status', 'completed')
+      .maybeSingle();
 
-  if (!purchase) return jsonError('Not purchased.', 403);
+    if (!purchase) return jsonError('Not purchased.', 403);
+  }
 
   // Get curriculum
   const { data: modules, error: err } = await admin

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { ArrowRight, Eye, EyeOff, Play, Download, Lock } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Play, Download } from 'lucide-react';
 import BuyButton from '@/components/BuyButton';
 
 type ProductInfo = { id: string; file_url: string; type: string; price_usd: number };
@@ -57,7 +57,7 @@ export default function ProductCTA({ slug, label = 'Get Access' }: Props) {
     })();
   }, [slug]);
 
-  async function handleRegister(e: React.FormEvent) {
+  async function handleRegister(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (password.length < 6) { setFormError('Password must be at least 6 characters.'); return; }
     setSubmitting(true);
@@ -77,7 +77,12 @@ export default function ProductCTA({ slug, label = 'Get Access' }: Props) {
     }
 
     await supabase.auth.signInWithPassword({ email, password });
-    // Trigger Stripe checkout after account creation
+    // Free product: go straight to course player
+    if (product?.price_usd === 0) {
+      router.push(product.type === 'course' ? `/members/courses/${slug}` : '/members');
+      return;
+    }
+    // Paid product: trigger Stripe checkout
     const checkoutRes = await fetch('/api/checkout/stripe', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slug }),
@@ -87,15 +92,23 @@ export default function ProductCTA({ slug, label = 'Get Access' }: Props) {
     router.push(`/academy/${slug}`);
   }
 
-  /* ── Owned: show access ── */
+  /* ── Owned (or free): show access ── */
   if (uiState === 'owned' && product) {
+    if (product.type === 'course') {
+      return (
+        <a href={`/members/courses/${slug}`}
+          className="fd-btn fd-btn-primary" style={{ fontSize: 15, padding: '12px 24px', textDecoration: 'none' }}>
+          <Play size={15} /> Watch Course
+        </a>
+      );
+    }
     if (!product.file_url) {
       return <span style={{ fontSize: 14, color: '#86efac', fontWeight: 600 }}>✓ You have access</span>;
     }
     return (
       <a href={product.file_url} target="_blank" rel="noopener noreferrer"
         className="fd-btn fd-btn-primary" style={{ fontSize: 15, padding: '12px 24px', textDecoration: 'none' }}>
-        {product.type === 'course' ? <><Play size={15} /> Watch Course</> : <><Download size={15} /> Download Now</>}
+        <Download size={15} /> Download Now
       </a>
     );
   }
@@ -103,6 +116,15 @@ export default function ProductCTA({ slug, label = 'Get Access' }: Props) {
   /* ── Logged-in, not purchased ── */
   if (uiState === 'member') {
     if (!product) return null;
+    // Free products: go straight to the course player
+    if (product.price_usd === 0) {
+      return (
+        <a href={product.type === 'course' ? `/members/courses/${slug}` : '#'}
+          className="fd-btn fd-btn-primary" style={{ fontSize: 15, padding: '12px 24px', textDecoration: 'none' }}>
+          <Play size={15} /> Start watching — it&apos;s free
+        </a>
+      );
+    }
     return (
       <BuyButton
         slug={slug}
@@ -124,7 +146,7 @@ export default function ProductCTA({ slug, label = 'Get Access' }: Props) {
         <button onClick={() => setShowForm(true)}
           className="fd-btn fd-btn-primary"
           style={{ fontSize: 15, padding: '12px 24px', border: 'none', cursor: 'pointer' }}>
-          {label}{product ? ` — $${product.price_usd}` : ''} <ArrowRight size={15} />
+          {label}{product?.price_usd ? ` — $${product.price_usd}` : ''} <ArrowRight size={15} />
         </button>
       ) : (
         <div style={{
